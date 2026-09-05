@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>Reviews | ShopSphere</title>
+
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <link rel="stylesheet"
+        href="style.css">
+
+</head>
+
+
+<body>
+
+
+    <!-- NAVBAR -->
+
+    <nav class="navbar">
+
+        <div class="logo">
+
+            <a href="index.html">
+                ShopSphere
+            </a>
+
+        </div>
+
+
+        <div class="nav-links">
+
+            <a href="index.html">
+                Home
+            </a>
+
+            <a href="index.html#products">
+                Shop
+            </a>
+
+            <a href="index.html#categories">
+                Categories
+            </a>
+
+            <a href="index.html#products">
+                Deals
+            </a>
+
+        </div>
+
+
+        <div class="nav-actions">
+
+            <a href="wishlist.html"
+                class="icon-btn">
+
+                <i class="fa-regular fa-heart"></i>
+
+            </a>
+
+
+            <a href="cart.html"
+                class="icon-btn">
+
+                <i class="fa-solid fa-bag-shopping"></i>
+
+            </a>
+
+
+            <a href="login.html"
+                class="login-btn">
+
+                Sign In
+
+            </a>
+
+        </div>
+
+    </nav>
+
+
+
+    <!-- REVIEWS -->
+
+    <main class="reviews-page">
+
+        <div class="page-header">
+
+            <h1>
+                Product Reviews
+            </h1>
+
+            <p>
+                Share your experience with ShopSphere products.
+            </p>
+
+        </div>
+
+
+
+        <!-- REVIEW FORM -->
+
+        <section class="review-form-section">
+
+            <h2>
+                Write a Review
+            </h2>
+
+
+            <div class="review-form">
+
+                <div class="form-group">
+
+                    <label for="product-id">
+                        Product ID
+                    </label>
+
+                    <input
+                        type="number"
+                        id="product-id"
+                        placeholder="Enter product ID"
+                        min="1"
+                        required>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="rating">
+                        Rating
+                    </label>
+
+                    <select
+                        id="rating"
+                        required>
+
+                        <option value="">
+                            Select rating
+                        </option>
+
+                        <option value="5">
+                            ★★★★★ — 5
+                        </option>
+
+                        <option value="4">
+                            ★★★★☆ — 4
+                        </option>
+
+                        <option value="3">
+                            ★★★☆☆ — 3
+                        </option>
+
+                        <option value="2">
+                            ★★☆☆☆ — 2
+                        </option>
+
+                        <option value="1">
+                            ★☆☆☆☆ — 1
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="review-text">
+                        Your Review
+                    </label>
+
+                    <textarea
+                        id="review-text"
+                        placeholder="Write your review..."
+                        rows="5"
+                        required></textarea>
+
+                </div>
+
+
+                <button
+                    type="button"
+                    onclick="submitReview()">
+
+                    <i class="fa-solid fa-paper-plane"></i>
+
+                    Submit Review
+
+                </button>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- REVIEWS DISPLAY -->
+
+        <section class="reviews-display-section">
+
+            <div class="reviews-heading">
+
+                <h2>
+                    Product Reviews
+                </h2>
+
+                <button
+                    type="button"
+                    onclick="loadReviews()">
+
+                    <i class="fa-solid fa-rotate"></i>
+
+                    Load Reviews
+
+                </button>
+
+            </div>
+
+
+            <div id="reviews-container">
+
+                <div class="reviews-placeholder">
+
+                    <i class="fa-solid fa-comments"></i>
+
+                    <p>
+                        Enter a Product ID and load its reviews.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+
+    <!-- SCRIPT -->
+
+    <script>
+
+        const API_URL =
+            "http://localhost:5000";
+
+
+
+        // ==========================================
+        // GET LOGGED-IN USER
+        // ==========================================
+
+        function getLoggedInUser() {
+
+            const userData =
+                localStorage.getItem(
+                    "shopsphere_user"
+                );
+
+
+            if (!userData) {
+
+                return null;
+
+            }
+
+
+            try {
+
+                return JSON.parse(
+                    userData
+                );
+
+            } catch (error) {
+
+                console.error(
+                    "Invalid user data:",
+                    error
+                );
+
+                localStorage.removeItem(
+                    "shopsphere_user"
+                );
+
+                return null;
+
+            }
+
+        }
+
+
+
+        // ==========================================
+        // SUBMIT REVIEW
+        // ==========================================
+
+        async function submitReview() {
+
+            const user =
+                getLoggedInUser();
+
+
+            if (!user) {
+
+                alert(
+                    "⚠️ Please sign in to submit a review."
+                );
+
+                window.location.href =
+                    "login.html";
+
+                return;
+
+            }
+
+
+            const productId =
+                document.getElementById(
+                    "product-id"
+                ).value;
+
+
+            const rating =
+                document.getElementById(
+                    "rating"
+                ).value;
+
+
+            const reviewText =
+                document.getElementById(
+                    "review-text"
+                ).value.trim();
+
+
+
+            // Validation
+            if (
+                !productId ||
+                !rating ||
+                !reviewText
+            ) {
+
+                alert(
+                    "⚠️ Please fill in all review details."
+                );
+
+                return;
+
+            }
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        `${API_URL}/api/reviews`,
+                        {
+                            method: "POST",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json"
+                            },
+
+                            body: JSON.stringify({
+
+                                user_id:
+                                    user.user_id,
+
+                                product_id:
+                                    Number(productId),
+
+                                rating:
+                                    Number(rating),
+
+                                review_text:
+                                    reviewText
+
+                            })
+
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        data.error ||
+                        "Could not submit review"
+                    );
+
+                }
+
+
+                alert(
+                    "✅ Review submitted successfully!"
+                );
+
+
+                // Clear review text
+                document.getElementById(
+                    "review-text"
+                ).value = "";
+
+
+                document.getElementById(
+                    "rating"
+                ).value = "";
+
+
+                // Reload reviews
+                loadReviews();
+
+
+            } catch (error) {
+
+                console.error(error);
+
+
+                alert(
+                    `❌ ${error.message}`
+                );
+
+            }
+
+        }
+
+
+
+        // ==========================================
+        // LOAD REVIEWS
+        // ==========================================
+
+        async function loadReviews() {
+
+            const productId =
+                document.getElementById(
+                    "product-id"
+                ).value;
+
+
+            if (!productId) {
+
+                alert(
+                    "⚠️ Please enter a Product ID first."
+                );
+
+                return;
+
+            }
+
+
+            const container =
+                document.getElementById(
+                    "reviews-container"
+                );
+
+
+            container.innerHTML = `
+
+                <div class="loading">
+
+                    <i class="fa-solid fa-spinner fa-spin"></i>
+
+                    Loading reviews...
+
+                </div>
+
+            `;
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        `${API_URL}/api/reviews/${productId}`
+                    );
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        "Failed to load reviews"
+                    );
+
+                }
+
+
+                const reviews =
+                    await response.json();
+
+
+                displayReviews(
+                    reviews,
+                    container
+                );
+
+
+            } catch (error) {
+
+                console.error(error);
+
+
+                container.innerHTML = `
+
+                    <div class="reviews-error">
+
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+
+                        <h3>
+                            Unable to load reviews
+                        </h3>
+
+                        <p>
+                            Please try again later.
+                        </p>
+
+                    </div>
+
+                `;
+
+            }
+
+        }
+
+
+
+        // ==========================================
+        // DISPLAY REVIEWS
+        // ==========================================
+
+        function displayReviews(
+            reviews,
+            container
+        ) {
+
+            if (
+                !reviews ||
+                reviews.length === 0
+            ) {
+
+                container.innerHTML = `
+
+                    <div class="empty-reviews">
+
+                        <i class="fa-regular fa-comment"></i>
+
+                        <h3>
+                            No reviews yet
+                        </h3>
+
+                        <p>
+                            Be the first to review this product.
+                        </p>
+
+                    </div>
+
+                `;
+
+                return;
+
+            }
+
+
+            container.innerHTML = "";
+
+
+            reviews.forEach(review => {
+
+                const reviewCard =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                reviewCard.className =
+                    "review-card";
+
+
+                const rating =
+                    Number(
+                        review.rating || 0
+                    );
+
+
+                const stars =
+                    "★".repeat(rating) +
+                    "☆".repeat(
+                        5 - rating
+                    );
+
+
+                const reviewDate =
+                    review.created_at
+                        ? new Date(
+                            review.created_at
+                        ).toLocaleDateString(
+                            "en-IN",
+                            {
+                                day: "numeric",
+                                month: "short",
+                                year: "numeric"
+                            }
+                        )
+                        : "";
+
+
+                reviewCard.innerHTML = `
+
+                    <div class="review-header">
+
+                        <div>
+
+                            <strong>
+                                ${review.full_name || "ShopSphere User"}
+                            </strong>
+
+                            <div class="review-stars">
+                                ${stars}
+                            </div>
+
+                        </div>
+
+
+                        <span>
+                            ${reviewDate}
+                        </span>
+
+                    </div>
+
+
+                    <p class="review-text">
+
+                        ${review.review_text || ""}
+
+                    </p>
+
+                `;
+
+
+                container.appendChild(
+                    reviewCard
+                );
+
+            });
+
+        }
+
+    </script>
+
+
+</body>
+
+</html>

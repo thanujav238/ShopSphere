@@ -1,0 +1,1185 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>ShopSphere | Shop Smarter</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+
+    <!-- =========================================
+         HEADER BADGE STYLES
+    ========================================== -->
+
+    <style>
+
+        /* Wishlist / Cart badge */
+
+        .nav-actions .icon-btn {
+            position: relative;
+        }
+
+        .nav-actions .badge {
+            position: absolute;
+
+            top: -5px;
+            right: -5px;
+
+            min-width: 18px;
+            height: 18px;
+
+            padding: 0 5px;
+
+            border-radius: 50px;
+
+            background: #111827;
+            color: #ffffff;
+
+            font-size: 10px;
+            font-weight: 700;
+
+            display: none;
+
+            align-items: center;
+            justify-content: center;
+
+            line-height: 1;
+
+            border: 2px solid #ffffff;
+
+            z-index: 10;
+        }
+
+        .nav-actions .badge.visible {
+            display: flex;
+        }
+
+        /* Make sure the icon buttons don't get affected by badge */
+
+        .nav-actions .icon-btn {
+            overflow: visible;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- =========================================
+         NAVBAR
+    ========================================== -->
+
+    <header class="navbar">
+
+        <div class="logo">
+
+            <span class="logo-icon">S</span>
+
+            <span>
+                Shop<span>Sphere</span>
+            </span>
+
+        </div>
+
+
+        <nav class="nav-links">
+
+            <a href="index.html" class="active">
+                Home
+            </a>
+
+            <a href="#products">
+                Shop
+            </a>
+
+            <a href="#categories">
+                Categories
+            </a>
+
+            <a href="#products">
+                Deals
+            </a>
+
+            <a href="compatibility.html">
+                Compatibility
+            </a>
+
+        </nav>
+
+
+        <div class="nav-actions">
+
+
+            <!-- SEARCH -->
+
+            <button
+                class="icon-btn"
+                type="button"
+            >
+
+                <i class="fa-solid fa-magnifying-glass"></i>
+
+            </button>
+
+
+            <!-- WISHLIST -->
+
+            <button
+                class="icon-btn"
+                type="button"
+                onclick="window.location.href='wishlist.html'"
+                aria-label="Wishlist"
+            >
+
+                <i class="fa-regular fa-heart"></i>
+
+                <span
+                    class="badge"
+                    id="wishlist-count"
+                >
+                    0
+                </span>
+
+            </button>
+
+
+            <!-- CART -->
+
+            <button
+                class="icon-btn"
+                type="button"
+                onclick="window.location.href='cart.html'"
+                aria-label="Cart"
+            >
+
+                <i class="fa-solid fa-bag-shopping"></i>
+
+                <span
+                    class="badge"
+                    id="cart-count"
+                >
+                    0
+                </span>
+
+            </button>
+
+
+            <!-- ACCOUNT -->
+
+            <button
+                class="login-btn"
+                type="button"
+                id="account-btn"
+                onclick="handleAccountButton()"
+            >
+                Sign In
+            </button>
+
+        </div>
+
+    </header>
+
+
+    <!-- =========================================
+         HERO
+    ========================================== -->
+
+    <main>
+
+        <section class="hero">
+
+
+            <div class="hero-content">
+
+
+                <div class="hero-tag">
+
+                    <i class="fa-solid fa-sparkles"></i>
+
+                    YOUR SMARTER WAY TO SHOP
+
+                </div>
+
+
+                <h1>
+
+                    Discover.
+
+                    <span>Shop.</span>
+
+                    Experience.
+
+                </h1>
+
+
+                <p>
+
+                    Explore products from trusted sellers, discover
+                    exclusive deals and enjoy a smarter shopping experience
+                    powered by ShopSphere.
+
+                </p>
+
+
+                <div class="hero-buttons">
+
+
+                    <button
+                        class="primary-btn"
+                        type="button"
+                        onclick="window.location.href='#products'"
+                    >
+
+                        Explore Products
+
+                        <i class="fa-solid fa-arrow-right"></i>
+
+                    </button>
+
+
+                    <button
+                        class="secondary-btn"
+                        type="button"
+                        onclick="window.location.href='#products'"
+                    >
+
+                        View Deals
+
+                    </button>
+
+
+                </div>
+
+
+                <div class="hero-stats">
+
+
+                    <div>
+
+                        <strong>10K+</strong>
+
+                        <small>
+                            Products
+                        </small>
+
+                    </div>
+
+
+                    <div>
+
+                        <strong>500+</strong>
+
+                        <small>
+                            Trusted Sellers
+                        </small>
+
+                    </div>
+
+
+                    <div>
+
+                        <strong>25K+</strong>
+
+                        <small>
+                            Happy Customers
+                        </small>
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+
+            <div class="hero-visual">
+
+
+                <div class="glow glow-one"></div>
+
+                <div class="glow glow-two"></div>
+
+
+                <div class="floating-card card-one">
+
+                    <i class="fa-solid fa-truck-fast"></i>
+
+                    <div>
+
+                        <strong>
+                            Fast Delivery
+                        </strong>
+
+                        <span>
+                            Track your order
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="floating-card card-two">
+
+                    <i class="fa-solid fa-shield-halved"></i>
+
+                    <div>
+
+                        <strong>
+                            Secure Shopping
+                        </strong>
+
+                        <span>
+                            100% protected
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="product-showcase">
+
+
+                    <div class="showcase-circle"></div>
+
+
+                    <div class="showcase-content">
+
+                        <span>
+                            FEATURED
+                        </span>
+
+
+                        <h3>
+
+                            Premium<br>
+                            Collection
+
+                        </h3>
+
+
+                        <p>
+                            Curated just for you.
+                        </p>
+
+
+                        <button
+                            type="button"
+                            onclick="window.location.href='#products'"
+                        >
+
+                            Shop Collection
+
+                            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+
+                        </button>
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+
+        </section>
+
+
+        <!-- =========================================
+             PRODUCTS
+        ========================================== -->
+
+        <section
+            class="section products-section"
+            id="products"
+        >
+
+
+            <div class="section-heading">
+
+
+                <div>
+
+                    <span class="section-label">
+                        OUR PRODUCTS
+                    </span>
+
+                    <h2>
+                        Featured Products
+                    </h2>
+
+                </div>
+
+
+                <div class="products-actions">
+
+
+                    <button
+                        class="view-products-btn"
+                        type="button"
+                        onclick="loadProducts()"
+                    >
+
+                        Refresh Products
+
+                        <i class="fa-solid fa-rotate"></i>
+
+                    </button>
+
+
+                </div>
+
+
+            </div>
+
+
+            <div
+                id="products-container"
+                class="products-grid"
+            >
+
+                <div class="loading">
+
+                    <i class="fa-solid fa-spinner fa-spin"></i>
+
+                    Loading products...
+
+                </div>
+
+            </div>
+
+
+        </section>
+
+
+        <!-- =========================================
+             CATEGORIES
+        ========================================== -->
+
+        <section
+            class="section categories-section"
+            id="categories"
+        >
+
+
+            <div class="section-heading">
+
+
+                <div>
+
+                    <span class="section-label">
+                        EXPLORE
+                    </span>
+
+                    <h2>
+                        Shop by Category
+                    </h2>
+
+                </div>
+
+
+                <a href="#categories">
+
+                    View all
+
+                    <i class="fa-solid fa-arrow-right"></i>
+
+                </a>
+
+
+            </div>
+
+
+            <div class="category-grid">
+
+
+                <div class="category-card electronics">
+
+                    <div class="category-icon">
+
+                        <i class="fa-solid fa-laptop"></i>
+
+                    </div>
+
+                    <h3>
+                        Electronics
+                    </h3>
+
+                    <p>
+                        2,500+ products
+                    </p>
+
+                    <i class="fa-solid fa-arrow-right arrow"></i>
+
+                </div>
+
+
+                <div class="category-card fashion">
+
+                    <div class="category-icon">
+
+                        <i class="fa-solid fa-shirt"></i>
+
+                    </div>
+
+                    <h3>
+                        Fashion
+                    </h3>
+
+                    <p>
+                        4,200+ products
+                    </p>
+
+                    <i class="fa-solid fa-arrow-right arrow"></i>
+
+                </div>
+
+
+                <div class="category-card home">
+
+                    <div class="category-icon">
+
+                        <i class="fa-solid fa-house"></i>
+
+                    </div>
+
+                    <h3>
+                        Home & Living
+                    </h3>
+
+                    <p>
+                        1,800+ products
+                    </p>
+
+                    <i class="fa-solid fa-arrow-right arrow"></i>
+
+                </div>
+
+
+                <div class="category-card beauty">
+
+                    <div class="category-icon">
+
+                        <i class="fa-solid fa-wand-magic-sparkles"></i>
+
+                    </div>
+
+                    <h3>
+                        Beauty
+                    </h3>
+
+                    <p>
+                        1,300+ products
+                    </p>
+
+                    <i class="fa-solid fa-arrow-right arrow"></i>
+
+                </div>
+
+
+                <div class="category-card books">
+
+                    <div class="category-icon">
+
+                        <i class="fa-solid fa-book"></i>
+
+                    </div>
+
+                    <h3>
+                        Books
+                    </h3>
+
+                    <p>
+                        3,000+ products
+                    </p>
+
+                    <i class="fa-solid fa-arrow-right arrow"></i>
+
+                </div>
+
+
+                <div class="category-card sports">
+
+                    <div class="category-icon">
+
+                        <i class="fa-solid fa-dumbbell"></i>
+
+                    </div>
+
+                    <h3>
+                        Sports
+                    </h3>
+
+                    <p>
+                        900+ products
+                    </p>
+
+                    <i class="fa-solid fa-arrow-right arrow"></i>
+
+                </div>
+
+
+            </div>
+
+
+        </section>
+
+
+        <!-- =========================================
+             FEATURES
+        ========================================== -->
+
+        <section class="section features-section">
+
+
+            <div class="section-heading centered">
+
+                <div>
+
+                    <span class="section-label">
+                        WHY SHOPSPHERE
+                    </span>
+
+                    <h2>
+                        Shopping, Reimagined.
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <div class="features-grid">
+
+
+                <!-- FEATURE 01
+                     INFORMATION ONLY -->
+
+                <div class="feature-card">
+
+
+                    <div class="feature-number">
+                        01
+                    </div>
+
+
+                    <i class="fa-solid fa-store feature-icon"></i>
+
+
+                    <h3>
+                        Multi-Vendor Marketplace
+                    </h3>
+
+
+                    <p>
+
+                        Discover products from multiple trusted sellers
+                        in one seamless marketplace.
+
+                    </p>
+
+
+                </div>
+
+
+                <!-- FEATURE 02
+                     INFORMATION ONLY -->
+
+                <div class="feature-card highlight">
+
+
+                    <div class="feature-number">
+                        02
+                    </div>
+
+
+                    <i class="fa-solid fa-rotate feature-icon"></i>
+
+
+                    <h3>
+                        Smart Returns
+                    </h3>
+
+
+                    <p>
+
+                        Check return eligibility instantly with our
+                        database-powered return assistant.
+
+                    </p>
+
+
+                </div>
+
+
+                <!-- FEATURE 03
+                     FUNCTIONAL -->
+
+                <div
+                    class="feature-card"
+                    onclick="window.location.href='compatibility.html'"
+                    style="cursor: pointer;"
+                >
+
+
+                    <div class="feature-number">
+                        03
+                    </div>
+
+
+                    <i class="fa-solid fa-circle-check feature-icon"></i>
+
+
+                    <h3>
+                        Compatibility Checker
+                    </h3>
+
+
+                    <p>
+
+                        Make confident purchases by checking product
+                        compatibility before ordering.
+
+                    </p>
+
+
+                </div>
+
+
+            </div>
+
+
+        </section>
+
+
+        <!-- =========================================
+             CTA
+        ========================================== -->
+
+        <section class="cta">
+
+
+            <div>
+
+
+                <span class="section-label">
+                    READY TO SHOP?
+                </span>
+
+
+                <h2>
+
+                    Your next favorite
+
+                    <span>product</span>
+
+                    is waiting.
+
+                </h2>
+
+
+                <p>
+                    Start exploring thousands of products today.
+                </p>
+
+
+                <button
+                    class="primary-btn"
+                    type="button"
+                    onclick="window.location.href='#products'"
+                >
+
+                    Start Shopping
+
+                    <i class="fa-solid fa-arrow-right"></i>
+
+                </button>
+
+
+            </div>
+
+
+        </section>
+
+
+    </main>
+
+
+    <!-- =========================================
+         FOOTER
+    ========================================== -->
+
+    <footer>
+
+
+        <div class="footer-main">
+
+
+            <div class="footer-brand">
+
+
+                <div class="logo">
+
+                    <span class="logo-icon">
+                        S
+                    </span>
+
+                    <span>
+                        Shop<span>Sphere</span>
+                    </span>
+
+                </div>
+
+
+                <p>
+                    A smarter multi-vendor shopping experience.
+                </p>
+
+
+                <div class="socials">
+
+                    <i class="fa-brands fa-instagram"></i>
+
+                    <i class="fa-brands fa-github"></i>
+
+                    <i class="fa-brands fa-linkedin"></i>
+
+                </div>
+
+
+            </div>
+
+
+            <div class="footer-column">
+
+
+                <h4>
+                    Shop
+                </h4>
+
+                <a href="#products">
+                    Products
+                </a>
+
+                <a href="#categories">
+                    Categories
+                </a>
+
+                <a href="#products">
+                    Deals
+                </a>
+
+                <a href="wishlist.html">
+                    Wishlist
+                </a>
+
+
+            </div>
+
+
+            <div class="footer-column">
+
+
+                <h4>
+                    Account
+                </h4>
+
+                <a href="login.html">
+                    Sign In
+                </a>
+
+                <a href="orders.html">
+                    My Orders
+                </a>
+
+                <a href="login.html">
+                    Profile
+                </a>
+
+                <a href="cart.html">
+                    Cart
+                </a>
+
+
+            </div>
+
+
+            <div class="footer-column">
+
+
+                <h4>
+                    Support
+                </h4>
+
+                <a href="returns.html">
+                    Help Center
+                </a>
+
+                <a href="returns.html">
+                    Returns
+                </a>
+
+                <a href="reviews.html">
+                    Contact Us
+                </a>
+
+                <a href="index.html">
+                    Privacy
+                </a>
+
+
+            </div>
+
+
+        </div>
+
+
+        <div class="footer-bottom">
+
+            <span>
+                © 2026 ShopSphere
+            </span>
+
+            <span>
+                Built with HTML • CSS • JavaScript • Node.js • MySQL
+            </span>
+
+        </div>
+
+
+    </footer>
+
+
+    <!-- =========================================
+         MAIN JAVASCRIPT
+    ========================================== -->
+
+    <script src="script.js"></script>
+
+
+    <!-- =========================================
+         CART & WISHLIST COUNT
+    ========================================== -->
+
+    <script>
+
+        const SHOPSPHERE_API =
+            "http://localhost:5000";
+
+
+        async function updateHeaderCounts() {
+
+            const wishlistBadge =
+                document.getElementById("wishlist-count");
+
+            const cartBadge =
+                document.getElementById("cart-count");
+
+
+            if (!wishlistBadge || !cartBadge) {
+                return;
+            }
+
+
+            const userData =
+                localStorage.getItem("shopsphere_user");
+
+
+            /* -----------------------------------------
+               LOGGED OUT
+            ----------------------------------------- */
+
+            if (!userData) {
+
+                wishlistBadge.classList.remove("visible");
+                cartBadge.classList.remove("visible");
+
+                return;
+
+            }
+
+
+            try {
+
+                const user =
+                    JSON.parse(userData);
+
+
+                if (!user.user_id) {
+
+                    wishlistBadge.classList.remove("visible");
+                    cartBadge.classList.remove("visible");
+
+                    return;
+
+                }
+
+
+                /* -----------------------------------------
+                   WISHLIST
+                ----------------------------------------- */
+
+                const wishlistResponse =
+                    await fetch(
+                        `${SHOPSPHERE_API}/api/wishlist/${user.user_id}`
+                    );
+
+
+                if (!wishlistResponse.ok) {
+                    throw new Error("Wishlist request failed");
+                }
+
+
+                const wishlist =
+                    await wishlistResponse.json();
+
+
+                const wishlistCount =
+                    Array.isArray(wishlist)
+                        ? wishlist.length
+                        : 0;
+
+
+                /* -----------------------------------------
+                   CART
+                ----------------------------------------- */
+const cartResponse = await fetch(
+    `${SHOPSPHERE_API}/api/cart/${user.user_id}`
+);
+
+if (!cartResponse.ok) {
+    throw new Error("Cart request failed");
+}
+
+const cartData = await cartResponse.json();
+
+const cartItems = Array.isArray(cartData.items)
+    ? cartData.items
+    : [];
+
+const cartCount = cartItems.reduce(
+    (total, item) => {
+        return total + Number(item.quantity || 0);
+    },
+    0
+);
+
+                /*
+                    Cart count represents TOTAL QUANTITY.
+
+                    Example:
+
+                    Product A × 1
+                    Product B × 2
+                    Product C × 1
+
+                    Cart badge = 4
+                */
+
+        
+
+
+                /* -----------------------------------------
+                   UPDATE WISHLIST BADGE
+                ----------------------------------------- */
+
+                if (wishlistCount > 0) {
+
+                    wishlistBadge.textContent =
+                        wishlistCount > 99
+                            ? "99+"
+                            : wishlistCount;
+
+                    wishlistBadge.classList.add("visible");
+
+                } else {
+
+                    wishlistBadge.classList.remove("visible");
+
+                }
+
+
+                /* -----------------------------------------
+                   UPDATE CART BADGE
+                ----------------------------------------- */
+
+                if (cartCount > 0) {
+
+                    cartBadge.textContent =
+                        cartCount > 99
+                            ? "99+"
+                            : cartCount;
+
+                    cartBadge.classList.add("visible");
+
+                } else {
+
+                    cartBadge.classList.remove("visible");
+
+                }
+
+
+            } catch (error) {
+
+                console.error(
+                    "Unable to load cart/wishlist counts:",
+                    error
+                );
+
+                wishlistBadge.classList.remove("visible");
+                cartBadge.classList.remove("visible");
+
+            }
+
+        }
+
+
+        /* -----------------------------------------
+           LOAD COUNTS WHEN PAGE OPENS
+        ----------------------------------------- */
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            () => {
+
+                updateHeaderCounts();
+
+            }
+        );
+
+
+        /* -----------------------------------------
+           UPDATE COUNTS WHEN USER RETURNS
+           TO THIS PAGE
+        ----------------------------------------- */
+
+        window.addEventListener(
+            "pageshow",
+            () => {
+
+                updateHeaderCounts();
+
+            }
+        );
+
+
+    </script>
+
+
+</body>
+
+</html>

@@ -1,0 +1,424 @@
+<script>
+
+const API_URL = "http://localhost:5000";
+
+
+// ==========================================
+// GET LOGGED-IN USER
+// ==========================================
+
+function getLoggedInUser() {
+
+    const userData =
+        localStorage.getItem("shopsphere_user");
+
+    if (!userData) {
+        return null;
+    }
+
+    try {
+
+        return JSON.parse(userData);
+
+    } catch (error) {
+
+        console.error(
+            "Invalid user data:",
+            error
+        );
+
+        localStorage.removeItem(
+            "shopsphere_user"
+        );
+
+        return null;
+    }
+}
+
+
+
+// ==========================================
+// CHECK RETURN ELIGIBILITY
+// ==========================================
+
+async function checkReturn() {
+
+    const user =
+        getLoggedInUser();
+
+
+    if (!user) {
+
+        alert(
+            "⚠️ Please sign in first."
+        );
+
+        window.location.href =
+            "login.html";
+
+        return;
+    }
+
+
+    const orderId =
+        document.getElementById(
+            "return-order-id"
+        ).value.trim();
+
+
+    const productId =
+        document.getElementById(
+            "return-product-id"
+        ).value.trim();
+
+
+    const result =
+        document.getElementById(
+            "return-result"
+        );
+
+
+    // Validation
+    if (!orderId || !productId) {
+
+        result.innerHTML = `
+
+            <div class="return-error">
+
+                <i class="fa-solid fa-triangle-exclamation"></i>
+
+                <p>
+                    Please enter both Order ID and Product ID.
+                </p>
+
+            </div>
+
+        `;
+
+        return;
+    }
+
+
+    result.innerHTML = `
+
+        <div class="loading">
+
+            <i class="fa-solid fa-spinner fa-spin"></i>
+
+            Checking eligibility...
+
+        </div>
+
+    `;
+
+
+    try {
+
+        const response =
+            await fetch(
+                `${API_URL}/api/returns/check/${user.user_id}/${orderId}/${productId}`
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                data.error ||
+                "Unable to check return eligibility"
+            );
+
+        }
+
+
+        // Eligible
+        if (data.eligible) {
+
+            result.innerHTML = `
+
+                <div class="return-success">
+
+                    <i class="fa-solid fa-circle-check"></i>
+
+                    <h3>
+                        Return Eligible
+                    </h3>
+
+                    <p>
+                        This product is eligible for return.
+                    </p>
+
+                    <button
+                        type="button"
+                        onclick="showReturnForm(${orderId}, ${productId})">
+
+                        Request Return
+
+                    </button>
+
+                </div>
+
+            `;
+
+        } else {
+
+            result.innerHTML = `
+
+                <div class="return-error">
+
+                    <i class="fa-solid fa-circle-xmark"></i>
+
+                    <h3>
+                        Return Not Eligible
+                    </h3>
+
+                    <p>
+                        ${data.message || "This product is not eligible for return."}
+                    </p>
+
+                </div>
+
+            `;
+
+        }
+
+
+    } catch (error) {
+
+        console.error(error);
+
+
+        result.innerHTML = `
+
+            <div class="return-error">
+
+                <i class="fa-solid fa-triangle-exclamation"></i>
+
+                <p>
+                    ${error.message}
+                </p>
+
+            </div>
+
+        `;
+
+    }
+
+}
+
+
+
+// ==========================================
+// SHOW RETURN FORM
+// ==========================================
+
+function showReturnForm(
+    orderId,
+    productId
+) {
+
+    const result =
+        document.getElementById(
+            "return-result"
+        );
+
+
+    result.innerHTML = `
+
+        <div class="return-request-form">
+
+            <h3>
+                Request Return
+            </h3>
+
+            <label for="return-reason">
+                Reason for return
+            </label>
+
+            <textarea
+                id="return-reason"
+                placeholder="Enter reason for return..."
+                rows="4"></textarea>
+
+            <button
+                type="button"
+                onclick="requestReturn(${orderId}, ${productId})">
+
+                <i class="fa-solid fa-rotate-left"></i>
+
+                Submit Return Request
+
+            </button>
+
+        </div>
+
+    `;
+
+}
+
+
+
+// ==========================================
+// REQUEST RETURN
+// ==========================================
+
+async function requestReturn(
+    orderId,
+    productId
+) {
+
+    const user =
+        getLoggedInUser();
+
+
+    if (!user) {
+
+        alert(
+            "⚠️ Please sign in first."
+        );
+
+        window.location.href =
+            "login.html";
+
+        return;
+    }
+
+
+    const reasonElement =
+        document.getElementById(
+            "return-reason"
+        );
+
+
+    const reason =
+        reasonElement
+            ? reasonElement.value.trim()
+            : "";
+
+
+    if (!reason) {
+
+        alert(
+            "⚠️ Please enter a reason for the return."
+        );
+
+        return;
+    }
+
+
+    try {
+
+        const response =
+            await fetch(
+                `${API_URL}/api/returns`,
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body: JSON.stringify({
+
+                        order_id:
+                            Number(orderId),
+
+                        product_id:
+                            Number(productId),
+
+                        user_id:
+                            user.user_id,
+
+                        reason:
+                            reason
+
+                    })
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                data.error ||
+                "Could not submit return request"
+            );
+
+        }
+
+
+        alert(
+            "✅ Return request submitted successfully!"
+        );
+
+
+        document.getElementById(
+            "return-result"
+        ).innerHTML = `
+
+            <div class="return-success">
+
+                <i class="fa-solid fa-circle-check"></i>
+
+                <h3>
+                    Return Request Submitted
+                </h3>
+
+                <p>
+                    Your return request has been submitted successfully.
+                </p>
+
+            </div>
+
+        `;
+
+
+    } catch (error) {
+
+        console.error(error);
+
+
+        alert(
+            `❌ ${error.message}`
+        );
+
+    }
+
+}
+
+
+
+// ==========================================
+// PAGE LOAD
+// ==========================================
+
+document.addEventListener(
+    "DOMContentLoaded",
+    () => {
+
+        const user =
+            getLoggedInUser();
+
+
+        if (!user) {
+
+            // Don't immediately redirect here.
+            // The user can see the page first.
+            console.log(
+                "User is not logged in."
+            );
+
+        }
+
+    }
+);
+
+</script>

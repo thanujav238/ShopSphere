@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>My Orders | ShopSphere</title>
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+
+        <div class="nav-container">
+
+            <a href="index.html" class="logo">
+                <i class="fa-solid fa-bag-shopping"></i>
+                ShopSphere
+            </a>
+
+            <div class="nav-links">
+
+                <a href="index.html">
+                    <i class="fa-solid fa-house"></i>
+                    Home
+                </a>
+
+                <a href="cart.html">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    Cart
+                </a>
+
+                <a href="orders.html" class="active">
+                    <i class="fa-solid fa-box"></i>
+                    My Orders
+                </a>
+
+            </div>
+
+        </div>
+
+    </nav>
+
+
+    <!-- ORDERS PAGE -->
+    <main class="orders-page">
+
+        <div class="orders-container">
+
+            <!-- HEADER -->
+            <div class="orders-header">
+
+                <span class="section-label">
+                    ORDER HISTORY
+                </span>
+
+                <h1>My Orders</h1>
+
+                <p>
+                    Track and manage all your ShopSphere orders.
+                </p>
+
+            </div>
+
+
+            <!-- ORDERS -->
+            <div id="orders-container">
+
+                <div class="orders-loading">
+
+                    <i class="fa-solid fa-spinner fa-spin"></i>
+
+                    <p>Loading your orders...</p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+
+    <!-- FOOTER -->
+    <footer class="footer">
+
+        <div class="footer-container">
+
+            <div class="footer-brand">
+
+                <div class="logo">
+                    <i class="fa-solid fa-bag-shopping"></i>
+                    ShopSphere
+                </div>
+
+                <p>
+                    Multi-vendor e-commerce and inventory management system.
+                </p>
+
+            </div>
+
+
+            <div class="footer-bottom">
+
+                <p>
+                    © 2026 ShopSphere. DBMS Project.
+                </p>
+
+            </div>
+
+        </div>
+
+    </footer>
+
+
+    <script src="orders.js"></script>
+
+</body>
+</html>

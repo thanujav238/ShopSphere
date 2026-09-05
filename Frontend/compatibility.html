@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Compatibility Checker | ShopSphere</title>
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    >
+
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+<nav class="navbar">
+
+    <div class="nav-container">
+
+        <a href="index.html" class="logo">
+            <i class="fa-solid fa-bag-shopping"></i>
+            ShopSphere
+        </a>
+
+        <div class="nav-links">
+
+            <a href="index.html">
+                <i class="fa-solid fa-house"></i>
+                Home
+            </a>
+
+        </div>
+
+    </div>
+
+</nav>
+
+
+<main class="seller-page">
+
+    <div class="seller-container">
+
+        <div class="seller-header">
+
+            <div>
+
+                <span class="section-label">
+                    SMART SHOPPING
+                </span>
+
+                <h1>
+                    Compatibility Checker
+                </h1>
+
+                <p>
+                    Find products compatible with your device.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <section class="seller-panel">
+
+            <div class="form-group">
+
+                <label for="device">
+                    Enter Device
+                </label>
+
+                <input
+                    type="text"
+                    id="device"
+                    placeholder="Example: iPhone 15"
+                >
+
+            </div>
+
+
+            <button
+                class="save-product-btn"
+                onclick="checkCompatibility()"
+            >
+
+                <i class="fa-solid fa-magnifying-glass"></i>
+                Check Compatibility
+
+            </button>
+
+
+            <div id="compatibility-results"></div>
+
+        </section>
+
+    </div>
+
+</main>
+
+
+<script>
+
+const API_URL = "http://localhost:5000";
+
+
+async function checkCompatibility() {
+
+    const device =
+        document.getElementById("device").value.trim();
+
+    const results =
+        document.getElementById("compatibility-results");
+
+
+    if (!device) {
+
+        alert("Please enter your device.");
+
+        return;
+
+    }
+
+
+    results.innerHTML = `
+
+        <div class="seller-loading">
+
+            <i class="fa-solid fa-spinner fa-spin"></i>
+
+            Checking compatibility...
+
+        </div>
+
+    `;
+
+
+    try {
+
+        const response = await fetch(
+            `${API_URL}/api/compatibility/${encodeURIComponent(device)}`
+        );
+
+
+        const products = await response.json();
+
+
+        if (!response.ok) {
+            throw new Error(products.error);
+        }
+
+
+        if (products.length === 0) {
+
+            results.innerHTML = `
+
+                <div class="seller-empty">
+
+                    <i class="fa-solid fa-circle-xmark"></i>
+
+                    <h3>No Compatible Products Found</h3>
+
+                    <p>
+                        Try entering another device name.
+                    </p>
+
+                </div>
+
+            `;
+
+            return;
+
+        }
+
+
+        results.innerHTML = `
+
+            <h2 style="margin-top:30px;">
+                Compatible Products
+            </h2>
+
+        `;
+
+
+        products.forEach(product => {
+
+            const card =
+                document.createElement("div");
+
+            card.className = "seller-order-card";
+
+
+            card.innerHTML = `
+
+                <div class="seller-order-header">
+
+                    <div>
+
+                        <strong>
+                            ${product.product_name}
+                        </strong>
+
+                        <span>
+                            ${product.brand || "ShopSphere"}
+                        </span>
+
+                    </div>
+
+                    <strong>
+                        ₹${Number(product.price)
+                            .toLocaleString("en-IN")}
+                    </strong>
+
+                </div>
+
+
+                <div class="seller-order-customer">
+
+                    <div>
+
+                        <i class="fa-solid fa-mobile-screen"></i>
+
+                        Compatible with:
+                        ${product.compatible_device}
+
+                    </div>
+
+                </div>
+
+
+                <div class="seller-order-payment">
+
+                    <span>
+
+                        <strong>
+                            Details:
+                        </strong>
+
+                        ${product.compatibility_details}
+
+                    </span>
+
+                </div>
+
+            `;
+
+
+            results.appendChild(card);
+
+        });
+
+
+    } catch (error) {
+
+        console.error(error);
+
+        results.innerHTML = `
+
+            <div class="seller-error">
+
+                ❌ ${error.message}
+
+            </div>
+
+        `;
+
+    }
+
+}
+
+</script>
+
+</body>
+
+</html>

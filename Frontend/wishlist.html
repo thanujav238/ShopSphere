@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>Wishlist | ShopSphere</title>
+
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <link rel="stylesheet"
+        href="style.css">
+
+</head>
+
+
+<body>
+
+
+    <!-- NAVBAR -->
+
+    <nav class="navbar">
+
+        <div class="logo">
+            <a href="index.html">
+                ShopSphere
+            </a>
+        </div>
+
+
+        <div class="nav-links">
+
+            <a href="index.html">
+                Home
+            </a>
+
+            <a href="index.html#products">
+                Shop
+            </a>
+
+            <a href="index.html#categories">
+                Categories
+            </a>
+
+            <a href="index.html#products">
+                Deals
+            </a>
+
+        </div>
+
+
+        <div class="nav-actions">
+
+            <a href="wishlist.html"
+                class="icon-btn active">
+
+                <i class="fa-regular fa-heart"></i>
+
+            </a>
+
+
+            <a href="cart.html"
+                class="icon-btn">
+
+                <i class="fa-solid fa-bag-shopping"></i>
+
+            </a>
+
+
+            <a href="login.html"
+                class="login-btn">
+
+                Sign In
+
+            </a>
+
+        </div>
+
+    </nav>
+
+
+
+    <!-- WISHLIST -->
+
+    <main class="wishlist-page">
+
+        <div class="page-header">
+
+            <h1>
+                My Wishlist
+            </h1>
+
+            <p>
+                Products you've saved for later.
+            </p>
+
+        </div>
+
+
+        <div id="wishlist-container">
+
+            <div class="loading">
+
+                <i class="fa-solid fa-spinner fa-spin"></i>
+
+                Loading wishlist...
+
+            </div>
+
+        </div>
+
+    </main>
+
+
+
+    <!-- SCRIPT -->
+
+    <script>
+
+        const API_URL =
+            "http://localhost:5000";
+
+
+        // ==========================================
+        // GET LOGGED-IN USER
+        // ==========================================
+
+        function getLoggedInUser() {
+
+            const userData =
+                localStorage.getItem(
+                    "shopsphere_user"
+                );
+
+
+            if (!userData) {
+
+                return null;
+
+            }
+
+
+            try {
+
+                return JSON.parse(
+                    userData
+                );
+
+            } catch (error) {
+
+                console.error(
+                    "Invalid user data:",
+                    error
+                );
+
+                localStorage.removeItem(
+                    "shopsphere_user"
+                );
+
+                return null;
+
+            }
+
+        }
+
+
+
+        // ==========================================
+        // LOAD WISHLIST
+        // ==========================================
+
+        async function loadWishlist() {
+
+            const user =
+                getLoggedInUser();
+
+
+            if (!user) {
+
+                alert(
+                    "⚠️ Please sign in first."
+                );
+
+                window.location.href =
+                    "login.html";
+
+                return;
+
+            }
+
+
+            const container =
+                document.getElementById(
+                    "wishlist-container"
+                );
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        `${API_URL}/api/wishlist/${user.user_id}`
+                    );
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        "Failed to load wishlist"
+                    );
+
+                }
+
+
+                const wishlist =
+                    await response.json();
+
+
+                displayWishlist(
+                    wishlist,
+                    container
+                );
+
+
+            } catch (error) {
+
+                console.error(error);
+
+
+                container.innerHTML = `
+
+                    <div class="wishlist-error">
+
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+
+                        <h3>
+                            Unable to load wishlist
+                        </h3>
+
+                        <p>
+                            Please try again later.
+                        </p>
+
+                    </div>
+
+                `;
+
+            }
+
+        }
+
+
+
+        // ==========================================
+        // DISPLAY WISHLIST
+        // ==========================================
+
+        function displayWishlist(
+            wishlist,
+            container
+        ) {
+
+            if (
+                !wishlist ||
+                wishlist.length === 0
+            ) {
+
+                container.innerHTML = `
+
+                    <div class="empty-wishlist">
+
+                        <i class="fa-regular fa-heart"></i>
+
+                        <h3>
+                            Your wishlist is empty
+                        </h3>
+
+                        <p>
+                            Save products you love
+                            and find them here later.
+                        </p>
+
+                        <a href="index.html#products">
+                            Start Shopping
+                        </a>
+
+                    </div>
+
+                `;
+
+                return;
+
+            }
+
+
+            container.innerHTML = "";
+
+
+            wishlist.forEach(item => {
+
+                const card =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                card.className =
+                    "wishlist-card";
+
+
+                card.innerHTML = `
+
+                    <div class="wishlist-image">
+
+                        <i class="fa-solid fa-box"></i>
+
+                    </div>
+
+
+                    <div class="wishlist-info">
+
+                        <h3>
+                            ${item.product_name}
+                        </h3>
+
+
+                        <p>
+                            ${item.brand || ""}
+                        </p>
+
+
+                        <strong>
+                            ₹${Number(
+                                item.price || 0
+                            ).toLocaleString("en-IN")}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="wishlist-actions">
+
+                        <button
+                            type="button"
+                            onclick="addWishlistItemToCart(${item.product_id})">
+
+                            <i class="fa-solid fa-cart-plus"></i>
+
+                            Add to Cart
+
+                        </button>
+
+
+                        <button
+                            type="button"
+                            onclick="removeWishlist(${item.product_id})">
+
+                            <i class="fa-solid fa-trash"></i>
+
+                            Remove
+
+                        </button>
+
+                    </div>
+
+                `;
+
+
+                container.appendChild(card);
+
+            });
+
+        }
+
+
+
+        // ==========================================
+        // ADD WISHLIST ITEM TO CART
+        // ==========================================
+
+        async function addWishlistItemToCart(
+            productId
+        ) {
+
+            const user =
+                getLoggedInUser();
+
+
+            if (!user) {
+
+                alert(
+                    "⚠️ Please sign in first."
+                );
+
+                window.location.href =
+                    "login.html";
+
+                return;
+
+            }
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        `${API_URL}/api/cart/add`,
+                        {
+                            method: "POST",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json"
+                            },
+
+                            body: JSON.stringify({
+
+                                user_id:
+                                    user.user_id,
+
+                                product_id:
+                                    Number(productId),
+
+                                quantity: 1
+
+                            })
+
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        data.error ||
+                        "Could not add product to cart"
+                    );
+
+                }
+
+
+                alert(
+                    "✅ Product added to cart!"
+                );
+
+
+            } catch (error) {
+
+                console.error(error);
+
+
+                alert(
+                    `❌ ${error.message}`
+                );
+
+            }
+
+        }
+
+
+
+        // ==========================================
+        // REMOVE FROM WISHLIST
+        // ==========================================
+
+        async function removeWishlist(
+            productId
+        ) {
+
+            const user =
+                getLoggedInUser();
+
+
+            if (!user) {
+
+                alert(
+                    "⚠️ Please sign in first."
+                );
+
+                window.location.href =
+                    "login.html";
+
+                return;
+
+            }
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        `${API_URL}/api/wishlist/${user.user_id}/${productId}`,
+                        {
+                            method: "DELETE"
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        data.error ||
+                        "Could not remove product"
+                    );
+
+                }
+
+
+                alert(
+                    "❤️ Product removed from wishlist."
+                );
+
+
+                loadWishlist();
+
+
+            } catch (error) {
+
+                console.error(error);
+
+
+                alert(
+                    `❌ ${error.message}`
+                );
+
+            }
+
+        }
+
+
+
+        // ==========================================
+        // LOAD PAGE
+        // ==========================================
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            loadWishlist
+        );
+
+    </script>
+
+
+</body>
+
+</html>

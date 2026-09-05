@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Seller Dashboard | ShopSphere</title>
+
+    <!-- Font Awesome -->
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    >
+
+    <!-- Main CSS -->
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+
+<body>
+
+
+    <!-- =========================
+         NAVBAR
+    ========================== -->
+
+    <nav class="navbar">
+
+        <div class="nav-container">
+
+            <a href="index.html" class="logo">
+
+                <i class="fa-solid fa-bag-shopping"></i>
+
+                ShopSphere
+
+            </a>
+
+
+            <div class="nav-links">
+
+                <a href="index.html">
+
+                    <i class="fa-solid fa-house"></i>
+
+                    Home
+
+                </a>
+
+
+                <a href="seller.html" class="active">
+
+                    <i class="fa-solid fa-store"></i>
+
+                    Seller Dashboard
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </nav>
+
+
+
+    <!-- =========================
+         SELLER DASHBOARD
+    ========================== -->
+
+    <main class="seller-page">
+
+        <div class="seller-container">
+
+
+            <!-- =========================
+                 SELLER HEADER
+            ========================== -->
+
+            <div class="seller-header">
+
+                <div>
+
+                    <span class="section-label">
+                        SELLER PANEL
+                    </span>
+
+                    <h1>
+                        Seller Dashboard
+                    </h1>
+
+                    <p>
+                        Manage your products, inventory and sales.
+                    </p>
+
+                </div>
+
+
+                <div class="seller-store">
+
+                    <i class="fa-solid fa-store"></i>
+
+                    <span id="store-name">
+                        Loading store...
+                    </span>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- =========================
+                 STATISTICS
+            ========================== -->
+
+            <section class="seller-stats">
+
+
+                <!-- TOTAL PRODUCTS -->
+
+                <div class="seller-stat-card">
+
+                    <div class="seller-stat-icon">
+
+                        <i class="fa-solid fa-box"></i>
+
+                    </div>
+
+                    <div>
+
+                        <span>
+                            Total Products
+                        </span>
+
+                        <strong id="total-products">
+                            0
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- TOTAL STOCK -->
+
+                <div class="seller-stat-card">
+
+                    <div class="seller-stat-icon">
+
+                        <i class="fa-solid fa-layer-group"></i>
+
+                    </div>
+
+                    <div>
+
+                        <span>
+                            Total Stock
+                        </span>
+
+                        <strong id="total-stock">
+                            0
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- ORDERS -->
+
+                <div class="seller-stat-card">
+
+                    <div class="seller-stat-icon">
+
+                        <i class="fa-solid fa-cart-shopping"></i>
+
+                    </div>
+
+                    <div>
+
+                        <span>
+                            Orders
+                        </span>
+
+                        <strong id="total-orders">
+                            0
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- SALES -->
+
+                <div class="seller-stat-card">
+
+                    <div class="seller-stat-icon">
+
+                        <i class="fa-solid fa-indian-rupee-sign"></i>
+
+                    </div>
+
+                    <div>
+
+                        <span>
+                            Total Sales
+                        </span>
+
+                        <strong id="total-sales">
+                            ₹0
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- =========================
+                 INVENTORY + LOW STOCK
+            ========================== -->
+
+            <section class="seller-dashboard-grid">
+
+
+                <!-- =========================
+                     INVENTORY
+                ========================== -->
+
+                <div class="seller-panel">
+
+                    <div class="seller-panel-header">
+
+                        <div>
+
+                            <span class="section-label">
+                                INVENTORY
+                            </span>
+
+                            <h2>
+                                Product Inventory
+                            </h2>
+
+                        </div>
+
+
+                        <div class="inventory-header-actions">
+
+
+                            <!-- ADD PRODUCT -->
+
+                            <button
+                                class="add-product-btn"
+                                onclick="openAddProductModal()"
+                                type="button"
+                            >
+
+                                <i class="fa-solid fa-plus"></i>
+
+                                Add Product
+
+                            </button>
+
+
+                            <!-- REFRESH -->
+
+                            <button
+                                class="refresh-dashboard"
+                                onclick="loadSellerDashboard()"
+                                title="Refresh Dashboard"
+                                type="button"
+                            >
+
+                                <i class="fa-solid fa-rotate"></i>
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- INVENTORY -->
+
+                    <div id="inventory-container">
+
+                        <div class="seller-loading">
+
+                            <i class="fa-solid fa-spinner fa-spin"></i>
+
+                            Loading inventory...
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- =========================
+                     LOW STOCK
+                ========================== -->
+
+                <div class="seller-panel">
+
+                    <div class="seller-panel-header">
+
+                        <div>
+
+                            <span class="section-label">
+                                ALERTS
+                            </span>
+
+                            <h2>
+                                Low Stock
+                            </h2>
+
+                        </div>
+
+
+                        <i
+                            class="fa-solid fa-triangle-exclamation panel-heading-icon"
+                        ></i>
+
+                    </div>
+
+
+                    <div id="low-stock-container">
+
+                        <div class="seller-loading">
+
+                            <i class="fa-solid fa-spinner fa-spin"></i>
+
+                            Checking inventory...
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+<!-- =========================
+     SELLER ORDERS
+========================= -->
+
+<section class="seller-panel">
+
+    <div class="seller-panel-header">
+
+        <div>
+            <span class="section-label">
+                ORDERS
+            </span>
+
+            <h2>
+                Customer Orders
+            </h2>
+        </div>
+
+        <button
+            class="refresh-dashboard"
+            onclick="loadSellerOrders()"
+            type="button"
+            title="Refresh Orders"
+        >
+            <i class="fa-solid fa-rotate"></i>
+        </button>
+
+    </div>
+
+    <div id="seller-orders-container">
+
+        <div class="seller-loading">
+            <i class="fa-solid fa-spinner fa-spin"></i>
+            Loading orders...
+        </div>
+
+    </div>
+
+</section>
+
+            <!-- =========================
+                 SALES OVERVIEW
+            ========================== -->
+
+            <section class="seller-panel sales-panel">
+
+                <div class="seller-panel-header">
+
+                    <div>
+
+                        <span class="section-label">
+                            PERFORMANCE
+                        </span>
+
+                        <h2>
+                            Sales Overview
+                        </h2>
+
+                    </div>
+
+                </div>
+
+
+                <div id="sales-container">
+
+                    <div class="seller-loading">
+
+                        <i class="fa-solid fa-spinner fa-spin"></i>
+
+                        Loading sales data...
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+        </div>
+
+    </main>
+
+
+
+    <!-- =========================
+         FOOTER
+    ========================== -->
+
+    <footer class="footer">
+
+        <div class="footer-container">
+
+
+            <div class="footer-brand">
+
+                <div class="logo">
+
+                    <i class="fa-solid fa-bag-shopping"></i>
+
+                    ShopSphere
+
+                </div>
+
+                <p>
+                    Multi-vendor e-commerce and inventory management system.
+                </p>
+
+            </div>
+
+
+            <div class="footer-bottom">
+
+                <p>
+                    © 2026 ShopSphere. DBMS Project.
+                </p>
+
+            </div>
+
+        </div>
+
+    </footer>
+
+
+
+    <!-- ==================================================
+         ADD PRODUCT MODAL
+    =================================================== -->
+
+    <div
+        id="product-modal"
+        class="product-modal"
+    >
+
+        <div class="product-modal-content">
+
+
+            <!-- HEADER -->
+
+            <div class="modal-header">
+
+                <div>
+
+                    <span class="section-label">
+                        INVENTORY
+                    </span>
+
+                    <h2>
+                        Add New Product
+                    </h2>
+
+                </div>
+
+
+                <button
+                    class="close-modal-btn"
+                    onclick="closeProductModal()"
+                    type="button"
+                >
+
+                    <i class="fa-solid fa-xmark"></i>
+
+                </button>
+
+            </div>
+
+
+
+            <!-- ADD FORM -->
+
+            <form id="add-product-form">
+
+
+                <!-- PRODUCT NAME -->
+
+                <div class="form-group">
+
+                    <label for="product-name">
+                        Product Name
+                    </label>
+
+                    <input
+                        type="text"
+                        id="product-name"
+                        placeholder="Enter product name"
+                        required
+                    >
+
+                </div>
+
+
+
+                <!-- CATEGORY + BRAND -->
+
+                <div class="form-row">
+
+                    <div class="form-group">
+
+                        <label for="product-category">
+                            Category
+                        </label>
+
+                        <select
+                            id="product-category"
+                            required
+                        >
+
+                            <option value="">
+                                Select Category
+                            </option>
+
+                            <option value="1">
+                                Electronics
+                            </option>
+
+                            <option value="2">
+                                Fashion
+                            </option>
+
+                            <option value="3">
+                                Home & Living
+                            </option>
+
+                            <option value="4">
+                                Beauty
+                            </option>
+
+                            <option value="5">
+                                Books
+                            </option>
+
+                            <option value="6">
+                                Sports
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="product-brand">
+                            Brand
+                        </label>
+
+                        <input
+                            type="text"
+                            id="product-brand"
+                            placeholder="Enter brand"
+                        >
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- DESCRIPTION -->
+
+                <div class="form-group">
+
+                    <label for="product-description">
+                        Description
+                    </label>
+
+                    <textarea
+                        id="product-description"
+                        placeholder="Enter product description"
+                        rows="3"
+                    ></textarea>
+
+                </div>
+
+
+
+                <!-- PRICE + STOCK -->
+
+                <div class="form-row">
+
+                    <div class="form-group">
+
+                        <label for="product-price">
+                            Price (₹)
+                        </label>
+
+                        <input
+                            type="number"
+                            id="product-price"
+                            min="0"
+                            step="0.01"
+                            placeholder="2499"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="product-quantity">
+                            Initial Stock
+                        </label>
+
+                        <input
+                            type="number"
+                            id="product-quantity"
+                            min="0"
+                            placeholder="20"
+                            required
+                        >
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- REORDER LEVEL -->
+
+                <div class="form-group">
+
+                    <label for="product-reorder">
+                        Reorder Level
+                    </label>
+
+                    <input
+                        type="number"
+                        id="product-reorder"
+                        min="0"
+                        value="5"
+                    >
+
+                </div>
+
+
+
+                <!-- ADD BUTTON -->
+
+                <button
+                    type="submit"
+                    class="save-product-btn"
+                >
+
+                    <i class="fa-solid fa-check"></i>
+
+                    Add Product
+
+                </button>
+
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ==================================================
+         EDIT PRODUCT MODAL
+    =================================================== -->
+
+    <div
+        id="edit-product-modal"
+        class="product-modal"
+    >
+
+        <div class="product-modal-content">
+
+
+            <!-- EDIT HEADER -->
+
+            <div class="modal-header">
+
+                <div>
+
+                    <span class="section-label">
+                        INVENTORY
+                    </span>
+
+                    <h2>
+                        Edit Product
+                    </h2>
+
+                </div>
+
+
+                <button
+                    class="close-modal-btn"
+                    onclick="closeEditProductModal()"
+                    type="button"
+                >
+
+                    <i class="fa-solid fa-xmark"></i>
+
+                </button>
+
+            </div>
+
+
+
+            <!-- EDIT FORM -->
+
+            <form id="edit-product-form">
+
+
+                <!-- PRODUCT ID -->
+
+                <input
+                    type="hidden"
+                    id="edit-product-id"
+                >
+
+
+
+                <!-- PRODUCT NAME -->
+
+                <div class="form-group">
+
+                    <label for="edit-product-name">
+                        Product Name
+                    </label>
+
+                    <input
+                        type="text"
+                        id="edit-product-name"
+                        placeholder="Enter product name"
+                        required
+                    >
+
+                </div>
+
+
+
+                <!-- CATEGORY + BRAND -->
+
+                <div class="form-row">
+
+
+                    <div class="form-group">
+
+                        <label for="edit-product-category">
+                            Category
+                        </label>
+
+                        <select
+                            id="edit-product-category"
+                            required
+                        >
+
+                            <option value="1">
+                                Electronics
+                            </option>
+
+                            <option value="2">
+                                Fashion
+                            </option>
+
+                            <option value="3">
+                                Home & Living
+                            </option>
+
+                            <option value="4">
+                                Beauty
+                            </option>
+
+                            <option value="5">
+                                Books
+                            </option>
+
+                            <option value="6">
+                                Sports
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="edit-product-brand">
+                            Brand
+                        </label>
+
+                        <input
+                            type="text"
+                            id="edit-product-brand"
+                            placeholder="Enter brand"
+                        >
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- DESCRIPTION -->
+
+                <div class="form-group">
+
+                    <label for="edit-product-description">
+                        Description
+                    </label>
+
+                    <textarea
+                        id="edit-product-description"
+                        placeholder="Enter product description"
+                        rows="3"
+                    ></textarea>
+
+                </div>
+
+
+
+                <!-- =================================
+                     PRICE + STOCK
+                ================================== -->
+
+                <div class="form-row">
+
+
+                    <!-- PRICE FIELD -->
+
+                    <div class="form-group">
+
+                        <label for="edit-product-price">
+                            Price (₹)
+                        </label>
+
+                        <input
+                            type="number"
+                            id="edit-product-price"
+                            min="0"
+                            step="0.01"
+                            placeholder="2499"
+                            required
+                        >
+
+                    </div>
+
+
+
+                    <!-- STOCK FIELD -->
+
+                    <div class="form-group">
+
+                        <label for="edit-product-quantity">
+                            Stock Quantity
+                        </label>
+
+                        <input
+                            type="number"
+                            id="edit-product-quantity"
+                            min="0"
+                            placeholder="20"
+                            required
+                        >
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- REORDER LEVEL -->
+
+                <div class="form-group">
+
+                    <label for="edit-product-reorder">
+                        Reorder Level
+                    </label>
+
+                    <input
+                        type="number"
+                        id="edit-product-reorder"
+                        min="0"
+                        placeholder="5"
+                        required
+                    >
+
+                </div>
+
+
+
+                <!-- SAVE CHANGES -->
+
+                <button
+                    type="submit"
+                    class="save-product-btn"
+                    id="update-product-btn"
+                >
+
+                    <i class="fa-solid fa-check"></i>
+
+                    Save Changes
+
+                </button>
+
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- SELLER JAVASCRIPT -->
+
+    <script src="seller.js"></script>
+
+
+</body>
+
+</html>

@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Admin Dashboard | ShopSphere</title>
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    >
+
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+<nav class="navbar">
+
+    <div class="nav-container">
+
+        <a href="index.html" class="logo">
+            <i class="fa-solid fa-bag-shopping"></i>
+            ShopSphere
+        </a>
+
+        <div class="nav-links">
+
+            <a href="index.html">
+                <i class="fa-solid fa-house"></i>
+                Home
+            </a>
+
+        </div>
+
+    </div>
+
+</nav>
+
+
+<main class="seller-page">
+
+    <div class="seller-container">
+
+        <div class="seller-header">
+
+            <div>
+
+                <span class="section-label">
+                    ADMIN PANEL
+                </span>
+
+                <h1>Admin Dashboard</h1>
+
+                <p>
+                    Monitor ShopSphere users, sellers, products and orders.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- STATISTICS -->
+
+        <section class="seller-stats">
+
+            <div class="seller-stat-card">
+
+                <div class="seller-stat-icon">
+                    <i class="fa-solid fa-users"></i>
+                </div>
+
+                <div>
+                    <span>Total Users</span>
+                    <strong id="total-users">0</strong>
+                </div>
+
+            </div>
+
+
+            <div class="seller-stat-card">
+
+                <div class="seller-stat-icon">
+                    <i class="fa-solid fa-store"></i>
+                </div>
+
+                <div>
+                    <span>Total Sellers</span>
+                    <strong id="total-sellers">0</strong>
+                </div>
+
+            </div>
+
+
+            <div class="seller-stat-card">
+
+                <div class="seller-stat-icon">
+                    <i class="fa-solid fa-box"></i>
+                </div>
+
+                <div>
+                    <span>Total Products</span>
+                    <strong id="total-products">0</strong>
+                </div>
+
+            </div>
+
+
+            <div class="seller-stat-card">
+
+                <div class="seller-stat-icon">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                </div>
+
+                <div>
+                    <span>Total Orders</span>
+                    <strong id="total-orders">0</strong>
+                </div>
+
+            </div>
+
+
+            <div class="seller-stat-card">
+
+                <div class="seller-stat-icon">
+                    <i class="fa-solid fa-indian-rupee-sign"></i>
+                </div>
+
+                <div>
+                    <span>Total Revenue</span>
+                    <strong id="total-revenue">₹0</strong>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- RECENT ORDERS -->
+
+        <section class="seller-panel">
+
+            <div class="seller-panel-header">
+
+                <div>
+
+                    <span class="section-label">
+                        ORDERS
+                    </span>
+
+                    <h2>Recent Orders</h2>
+
+                </div>
+
+            </div>
+
+            <div id="admin-orders">
+
+                <div class="seller-loading">
+                    <i class="fa-solid fa-spinner fa-spin"></i>
+                    Loading orders...
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- SELLERS -->
+
+        <section class="seller-panel">
+
+            <div class="seller-panel-header">
+
+                <div>
+
+                    <span class="section-label">
+                        SELLERS
+                    </span>
+
+                    <h2>Seller Overview</h2>
+
+                </div>
+
+            </div>
+
+            <div id="admin-sellers">
+
+                <div class="seller-loading">
+                    <i class="fa-solid fa-spinner fa-spin"></i>
+                    Loading sellers...
+                </div>
+
+            </div>
+
+        </section>
+
+    </div>
+
+</main>
+
+
+<script>
+
+const API_URL = "http://localhost:5000";
+
+
+async function loadAdminDashboard() {
+
+    try {
+
+        const response =
+            await fetch(`${API_URL}/api/admin/dashboard`);
+
+        const data =
+            await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.error);
+        }
+
+
+        const stats = data.statistics;
+
+
+        document.getElementById("total-users")
+            .textContent = stats.total_users;
+
+        document.getElementById("total-sellers")
+            .textContent = stats.total_sellers;
+
+        document.getElementById("total-products")
+            .textContent = stats.total_products;
+
+        document.getElementById("total-orders")
+            .textContent = stats.total_orders;
+
+        document.getElementById("total-revenue")
+            .textContent =
+                "₹" +
+                Number(stats.total_revenue)
+                    .toLocaleString("en-IN");
+
+
+        displayOrders(data.recent_orders);
+
+        displaySellers(data.sellers);
+
+
+    } catch (error) {
+
+        console.error(error);
+
+        alert("❌ " + error.message);
+
+    }
+
+}
+
+
+function displayOrders(orders) {
+
+    const container =
+        document.getElementById("admin-orders");
+
+    if (orders.length === 0) {
+
+        container.innerHTML =
+            "<p>No orders yet.</p>";
+
+        return;
+
+    }
+
+
+    container.innerHTML = "";
+
+
+    orders.forEach(order => {
+
+        const card =
+            document.createElement("div");
+
+        card.className =
+            "seller-order-card";
+
+
+        card.innerHTML = `
+
+            <div class="seller-order-header">
+
+                <div>
+
+                    <strong>
+                        Order #${order.order_id}
+                    </strong>
+
+                    <span>
+                        ${new Date(
+                            order.order_date
+                        ).toLocaleDateString("en-IN")}
+                    </span>
+
+                </div>
+
+                <strong>
+                    ₹${Number(order.total_amount)
+                        .toLocaleString("en-IN")}
+                </strong>
+
+            </div>
+
+
+            <div class="seller-order-customer">
+
+                <span>
+                    <i class="fa-solid fa-user"></i>
+                    ${order.customer_name}
+                </span>
+
+                <span>
+                    Status:
+                    ${order.order_status.toUpperCase()}
+                </span>
+
+            </div>
+
+        `;
+
+        container.appendChild(card);
+
+    });
+
+}
+
+
+function displaySellers(sellers) {
+
+    const container =
+        document.getElementById("admin-sellers");
+
+    container.innerHTML = "";
+
+
+    sellers.forEach(seller => {
+
+        const card =
+            document.createElement("div");
+
+        card.className =
+            "seller-order-card";
+
+
+        card.innerHTML = `
+
+            <div class="seller-order-header">
+
+                <div>
+
+                    <strong>
+                        ${seller.store_name}
+                    </strong>
+
+                    <span>
+                        ${seller.product_count} products
+                    </span>
+
+                </div>
+
+                <span class="seller-order-status confirmed">
+                    ${seller.seller_status.toUpperCase()}
+                </span>
+
+            </div>
+
+        `;
+
+        container.appendChild(card);
+
+    });
+
+}
+
+
+document.addEventListener(
+    "DOMContentLoaded",
+    loadAdminDashboard
+);
+
+</script>
+
+</body>
+
+</html>
