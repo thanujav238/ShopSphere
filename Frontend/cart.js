@@ -257,7 +257,7 @@ async function removeItem(cartItemId) {
     }
 }
 
-
+const API_URL = "https://shopsphere-backend-4aji.onrender.com";
 document.addEventListener(
     "DOMContentLoaded",
     loadCart
