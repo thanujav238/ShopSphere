@@ -42,15 +42,18 @@ async function loadProducts() {
 
             card.innerHTML = `
 
-                <div class="product-image">
+        <div class="product-image">
 
-                    <i class="fa-solid fa-box"></i>
+    <img
+        src="${window.location.origin}/${product.image}"
+        alt="${product.product_name}"
+    >
 
-                    <span class="product-category">
-                        ${product.category_name}
-                    </span>
+    <span class="product-category">
+        ${product.category_name}
+    </span>
 
-                </div>
+</div>
 
 
                 <div class="product-info">
@@ -270,7 +273,7 @@ document.addEventListener(
     loadProducts
 );
 
-```js
+
 function handleAccountButton() {
     const userData = localStorage.getItem("shopsphere_user");
 
@@ -289,7 +292,6 @@ function handleAccountButton() {
         window.location.href = "admin.html";
     }
 }
-```
 
 document.addEventListener("DOMContentLoaded", () => {
     const accountBtn = document.getElementById("account-btn");

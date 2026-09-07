@@ -1736,6 +1736,7 @@ app.get("/api/products", (req, res) => {
             p.description,
             p.price,
             p.brand,
+            p.image,
             c.category_name,
             s.store_name,
             i.quantity
