@@ -270,6 +270,7 @@ document.addEventListener(
     loadProducts
 );
 
+```js
 function handleAccountButton() {
     const userData = localStorage.getItem("shopsphere_user");
 
@@ -281,13 +282,15 @@ function handleAccountButton() {
     const user = JSON.parse(userData);
 
     if (user.role === "customer") {
-        window.location.href = "orders.html";
+        window.location.href = "profile.html";
     } else if (user.role === "seller") {
         window.location.href = "seller.html";
     } else if (user.role === "admin") {
         window.location.href = "admin.html";
     }
 }
+```
+
 document.addEventListener("DOMContentLoaded", () => {
     const accountBtn = document.getElementById("account-btn");
 
