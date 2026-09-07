@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>My Profile | ShopSphere</title>
+
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+
+        .profile-page {
+            min-height: 100vh;
+            padding: 60px 7%;
+            background: #f5f7fb;
+        }
+
+        .profile-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .profile-heading {
+            margin-bottom: 30px;
+        }
+
+        .profile-heading h1 {
+            font-size: 36px;
+            color: #111827;
+            margin-bottom: 8px;
+        }
+
+        .profile-heading p {
+            color: #6b7280;
+        }
+
+        .profile-card {
+            background: white;
+            border-radius: 20px;
+            padding: 35px;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.07);
+            margin-bottom: 25px;
+        }
+
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding-bottom: 25px;
+            border-bottom: 1px solid #e5e7eb;
+            margin-bottom: 25px;
+        }
+
+        .profile-avatar {
+            width: 75px;
+            height: 75px;
+            border-radius: 50%;
+            background: #111827;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        .profile-header h2 {
+            color: #111827;
+            margin-bottom: 5px;
+        }
+
+        .profile-header p {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .profile-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .profile-field {
+            padding: 18px;
+            background: #f9fafb;
+            border-radius: 12px;
+        }
+
+        .profile-field label {
+            display: block;
+            font-size: 12px;
+            font-weight: 700;
+            color: #6b7280;
+            text-transform: uppercase;
+            margin-bottom: 7px;
+        }
+
+        .profile-field span {
+            font-size: 15px;
+            color: #111827;
+            font-weight: 500;
+        }
+
+        .profile-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .profile-action {
+            border: 1px solid #e5e7eb;
+            background: white;
+            border-radius: 14px;
+            padding: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            text-align: left;
+            transition: 0.2s ease;
+        }
+
+        .profile-action:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .profile-action i {
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            background: #f3f4f6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #111827;
+        }
+
+        .profile-action strong {
+            display: block;
+            color: #111827;
+            margin-bottom: 3px;
+        }
+
+        .profile-action span {
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        .logout-btn {
+            width: 100%;
+            margin-top: 20px;
+            padding: 15px;
+            border: none;
+            border-radius: 12px;
+            background: #111827;
+            color: white;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s ease;
+        }
+
+        .logout-btn:hover {
+            background: #374151;
+        }
+
+        @media (max-width: 700px) {
+
+            .profile-page {
+                padding: 35px 20px;
+            }
+
+            .profile-card {
+                padding: 25px;
+            }
+
+            .profile-details,
+            .profile-actions {
+                grid-template-columns: 1fr;
+            }
+
+            .profile-heading h1 {
+                font-size: 30px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+    <main class="profile-page">
+
+        <div class="profile-container">
+
+            <div class="profile-heading">
+
+                <h1>My Profile</h1>
+
+                <p>
+                    Manage your ShopSphere account and shopping activity.
+                </p>
+
+            </div>
+
+
+            <!-- PROFILE INFORMATION -->
+
+            <section class="profile-card">
+
+                <div class="profile-header">
+
+                    <div class="profile-avatar" id="profile-avatar">
+                        U
+                    </div>
+
+                    <div>
+
+                        <h2 id="profile-name">
+                            User
+                        </h2>
+
+                        <p id="profile-role">
+                            ShopSphere Customer
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="profile-details">
+
+                    <div class="profile-field">
+
+                        <label>Full Name</label>
+
+                        <span id="full-name">
+                            -
+                        </span>
+
+                    </div>
+
+
+                    <div class="profile-field">
+
+                        <label>Email</label>
+
+                        <span id="email">
+                            -
+                        </span>
+
+                    </div>
+
+
+                    <div class="profile-field">
+
+                        <label>Phone</label>
+
+                        <span id="phone">
+                            -
+                        </span>
+
+                    </div>
+
+
+                    <div class="profile-field">
+
+                        <label>Account Type</label>
+
+                        <span id="role">
+                            -
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- ACCOUNT SHORTCUTS -->
+
+            <section class="profile-card">
+
+                <div class="profile-actions">
+
+                    <button
+                        class="profile-action"
+                        onclick="window.location.href='orders.html'"
+                    >
+
+                        <i class="fa-solid fa-box"></i>
+
+                        <div>
+
+                            <strong>My Orders</strong>
+
+                            <span>
+                                View your orders and purchases
+                            </span>
+
+                        </div>
+
+                    </button>
+
+
+                    <button
+                        class="profile-action"
+                        onclick="window.location.href='wishlist.html'"
+                    >
+
+                        <i class="fa-regular fa-heart"></i>
+
+                        <div>
+
+                            <strong>My Wishlist</strong>
+
+                            <span>
+                                View your saved products
+                            </span>
+
+                        </div>
+
+                    </button>
+
+                </div>
+
+
+                <button
+                    class="logout-btn"
+                    onclick="logout()"
+                >
+
+                    <i class="fa-solid fa-right-from-bracket"></i>
+
+                    Logout
+
+                </button>
+
+            </section>
+
+        </div>
+
+    </main>
+
+
+    <script>
+
+        /* =========================================
+           LOAD USER PROFILE
+        ========================================== */
+
+        const userData =
+            localStorage.getItem("shopsphere_user");
+
+
+        if (!userData) {
+
+            window.location.href = "login.html";
+
+        }
+
+
+        let user;
+
+        try {
+
+            user = JSON.parse(userData);
+
+        } catch (error) {
+
+            localStorage.removeItem("shopsphere_user");
+
+            window.location.href = "login.html";
+
+        }
+
+
+        if (user) {
+
+            document.getElementById("profile-name")
+                .textContent =
+                user.full_name || "User";
+
+
+            document.getElementById("full-name")
+                .textContent =
+                user.full_name || "Not provided";
+
+
+            document.getElementById("email")
+                .textContent =
+                user.email || "Not provided";
+
+
+            document.getElementById("phone")
+                .textContent =
+                user.phone || "Not provided";
+
+
+            document.getElementById("role")
+                .textContent =
+                user.role
+                    ? user.role.charAt(0).toUpperCase()
+                      + user.role.slice(1)
+                    : "Customer";
+
+
+            document.getElementById("profile-role")
+                .textContent =
+                user.role === "seller"
+                    ? "ShopSphere Seller"
+                    : user.role === "admin"
+                        ? "ShopSphere Administrator"
+                        : "ShopSphere Customer";
+
+
+            const firstLetter =
+                (user.full_name || "U")
+                    .charAt(0)
+                    .toUpperCase();
+
+
+            document.getElementById("profile-avatar")
+                .textContent =
+                firstLetter;
+
+        }
+
+
+        /* =========================================
+           LOGOUT
+        ========================================== */
+
+        function logout() {
+
+            localStorage.removeItem("shopsphere_user");
+
+            window.location.href = "login.html";
+
+        }
+
+    </script>
+
+</body>
+
+</html>

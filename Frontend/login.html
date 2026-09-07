@@ -1,7 +1,9 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -11,6 +13,7 @@
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
     <style>
+
         * {
             box-sizing: border-box;
             margin: 0;
@@ -201,7 +204,7 @@
         }
 
         /* ================================
-           ACCOUNT TYPE SELECTOR
+           ACCOUNT TYPE
         ================================= */
 
         .login-as-label {
@@ -397,19 +400,18 @@
         }
 
         .login-submit:hover {
-            background: #000;
+            background: #374151;
             transform: translateY(-1px);
-            box-shadow: 0 8px 20px rgba(17, 24, 39, 0.18);
         }
 
         .login-submit:disabled {
-            opacity: 0.7;
+            opacity: 0.65;
             cursor: not-allowed;
             transform: none;
         }
 
         /* ================================
-           MESSAGE / SECURITY
+           MESSAGE
         ================================= */
 
         #message {
@@ -417,34 +419,36 @@
             margin-top: 15px;
             text-align: center;
             font-size: 13px;
-            color: #dc2626;
+            font-weight: 600;
         }
 
         .security-note {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 7px;
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid #e5e7eb;
+            text-align: center;
             color: #9ca3af;
             font-size: 11px;
-            margin-top: 18px;
         }
 
         .security-note i {
-            color: #6b7280;
+            margin-right: 5px;
         }
 
         .back-home {
-            display: block;
-            text-align: center;
-            margin-top: 25px;
-            color: #6b7280;
-            font-size: 13px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 7px;
+            margin-top: 18px;
+            color: #374151;
             text-decoration: none;
+            font-size: 12px;
+            font-weight: 600;
         }
 
         .back-home:hover {
-            color: #111827;
+            text-decoration: underline;
         }
 
         /* ================================
@@ -453,434 +457,532 @@
 
         @media (max-width: 900px) {
 
+            .login-page {
+                flex-direction: column;
+            }
+
             .login-brand {
-                display: none;
+                width: 100%;
+                min-height: auto;
+                padding: 45px 30px;
             }
 
             .login-area {
                 width: 100%;
-                min-height: 100vh;
-                padding: 25px;
+                min-height: auto;
+                padding: 35px 20px;
             }
 
-            .login-card {
-                max-width: 500px;
+            .brand-logo {
+                margin-bottom: 30px;
             }
+
+            .login-brand h1 {
+                font-size: 42px;
+            }
+
         }
 
-        @media (max-width: 500px) {
-
-            .login-area {
-                padding: 15px;
-            }
+        @media (max-width: 520px) {
 
             .login-card {
                 padding: 28px 22px;
                 border-radius: 18px;
             }
 
-            .login-header h2 {
-                font-size: 26px;
-            }
-
             .account-selector {
                 grid-template-columns: 1fr;
             }
 
-            .account-option label {
-                min-height: 60px;
+            .login-options {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
             }
 
-            .login-options {
-                align-items: flex-start;
-                gap: 10px;
-                flex-direction: column;
-            }
         }
+
     </style>
+
 </head>
+
 
 <body>
 
-    <main class="login-page">
-
-        <!-- =========================================
-             LEFT BRANDING SECTION
-        ========================================== -->
-
-        <section class="login-brand">
-
-            <div class="brand-content">
-
-                <div class="brand-logo">
-                    <div class="brand-logo-icon">
-                        <i class="fa-solid fa-bag-shopping"></i>
-                    </div>
-
-                    <span>ShopSphere</span>
-                </div>
-
-                <span class="brand-tag">
-                    SMARTER SHOPPING
-                </span>
-
-                <h1>
-                    Your world of shopping,
-                    <span>all in one place.</span>
-                </h1>
-
-                <p class="brand-description">
-                    Discover products from trusted sellers,
-                    manage your orders, and enjoy a smarter
-                    shopping experience with ShopSphere.
-                </p>
-
-                <div class="benefits">
-
-                    <div class="benefit">
-                        <div class="benefit-icon">
-                            <i class="fa-solid fa-store"></i>
-                        </div>
-
-                        <div class="benefit-text">
-                            <strong>Trusted Sellers</strong>
-                            <span>Shop from multiple verified sellers.</span>
-                        </div>
-                    </div>
-
-                    <div class="benefit">
-                        <div class="benefit-icon">
-                            <i class="fa-solid fa-box"></i>
-                        </div>
-
-                        <div class="benefit-text">
-                            <strong>Easy Order Tracking</strong>
-                            <span>Keep track of your purchases with ease.</span>
-                        </div>
-                    </div>
-
-                    <div class="benefit">
-                        <div class="benefit-icon">
-                            <i class="fa-solid fa-shield-halved"></i>
-                        </div>
-
-                        <div class="benefit-text">
-                            <strong>Secure Shopping</strong>
-                            <span>Your account stays protected.</span>
-                        </div>
-                    </div>
-
-                </div>
-
-            </div>
-
-        </section>
-
-
-        <!-- =========================================
-             LOGIN SECTION
-        ========================================== -->
-
-        <section class="login-area">
-
-            <div class="login-card">
-
-                <div class="login-header">
-
-                    <h2>Welcome back</h2>
-
-                    <p>
-                        Sign in to continue to your ShopSphere account.
-                    </p>
-
-                </div>
-
-
-                <form id="login-form">
-
-                    <!-- ACCOUNT TYPE -->
-
-                    <span class="login-as-label">
-                        Login as
-                    </span>
-
-                    <div class="account-selector">
-
-                        <div class="account-option">
-
-                            <input
-                                type="radio"
-                                id="customer"
-                                name="account-type"
-                                value="customer"
-                                checked
-                            >
-
-                            <label for="customer">
-
-                                <div class="account-icon">
-                                    <i class="fa-solid fa-user"></i>
-                                </div>
-
-                                <div class="account-info">
-                                    <strong>Customer</strong>
-                                    <span>Shop & manage orders</span>
-                                </div>
-
-                            </label>
-
-                        </div>
-
-
-                        <div class="account-option">
-
-                            <input
-                                type="radio"
-                                id="seller"
-                                name="account-type"
-                                value="seller"
-                            >
-
-                            <label for="seller">
-
-                                <div class="account-icon">
-                                    <i class="fa-solid fa-store"></i>
-                                </div>
-
-                                <div class="account-info">
-                                    <strong>Seller</strong>
-                                    <span>Manage your store</span>
-                                </div>
-
-                            </label>
-
-                        </div>
-
-                    </div>
-
-
-                    <!-- EMAIL -->
-
-                    <div class="form-group">
-
-                        <label for="email">
-                            Email Address
-                        </label>
-
-                        <div class="input-wrapper">
-
-                            <i class="fa-solid fa-envelope"></i>
-
-                            <input
-                                type="email"
-                                id="email"
-                                placeholder="Enter your email"
-                                required
-                            >
-
-                        </div>
-
-                    </div>
-
-
-                    <!-- PASSWORD -->
-
-                    <div class="form-group">
-
-                        <label for="password">
-                            Password
-                        </label>
-
-                        <div class="input-wrapper">
-
-                            <i class="fa-solid fa-lock"></i>
-
-                            <input
-                                type="password"
-                                id="password"
-                                placeholder="Enter your password"
-                                required
-                            >
-
-                            <button
-                                type="button"
-                                class="password-toggle"
-                                id="password-toggle"
-                                aria-label="Show password"
-                            >
-                                <i class="fa-solid fa-eye"></i>
-                            </button>
-
-                        </div>
-
-                    </div>
-
-
-                    <!-- OPTIONS -->
-
-                    <div class="login-options">
-
-                        <label class="remember">
-
-                            <input
-                                type="checkbox"
-                                id="remember"
-                            >
-
-                            Remember me
-
-                        </label>
-
-                        <a href="#" class="forgot-password">
-                            Forgot password?
-                        </a>
-
-                    </div>
-
-
-                    <!-- SUBMIT -->
-
-                    <button
-                        type="submit"
-                        class="login-submit"
-                        id="login-button"
-                    >
-
-                        <i class="fa-solid fa-arrow-right-to-bracket"></i>
-
-                        <span>Sign In</span>
-
-                    </button>
-
-                </form>
-
-
-                <p id="message"></p>
-
-
-                <div class="security-note">
-
-                    <i class="fa-solid fa-lock"></i>
-
-                    Secure login powered by ShopSphere
-
-                </div>
-
-
-                <a href="index.html" class="back-home">
-
-                    <i class="fa-solid fa-arrow-left"></i>
-
-                    Back to ShopSphere
-
-                </a>
-
-            </div>
-
-        </section>
-
-    </main>
+<main class="login-page">
 
 
     <!-- =========================================
-         LOGIN JAVASCRIPT
+         BRANDING
     ========================================== -->
 
-    <script>
+    <section class="login-brand">
 
-        const API_URL = "https://shopsphere-backend-4aji.onrender.com";
+        <div class="brand-content">
 
+            <div class="brand-logo">
 
-        /* -----------------------------------------
-           PASSWORD SHOW / HIDE
-        ----------------------------------------- */
+                <div class="brand-logo-icon">
 
-        const passwordInput =
-            document.getElementById("password");
+                    <i class="fa-solid fa-store"></i>
 
-        const passwordToggle =
-            document.getElementById("password-toggle");
+                </div>
 
-        passwordToggle.addEventListener("click", () => {
+                <span>ShopSphere</span>
 
-            const icon =
-                passwordToggle.querySelector("i");
-
-            if (passwordInput.type === "password") {
-
-                passwordInput.type = "text";
-
-                icon.classList.remove("fa-eye");
-                icon.classList.add("fa-eye-slash");
-
-                passwordToggle.setAttribute(
-                    "aria-label",
-                    "Hide password"
-                );
-
-            } else {
-
-                passwordInput.type = "password";
-
-                icon.classList.remove("fa-eye-slash");
-                icon.classList.add("fa-eye");
-
-                passwordToggle.setAttribute(
-                    "aria-label",
-                    "Show password"
-                );
-            }
-
-        });
+            </div>
 
 
-        /* -----------------------------------------
-           LOGIN
-        ----------------------------------------- */
-
-        document
-            .getElementById("login-form")
-            .addEventListener("submit", async (e) => {
-
-                e.preventDefault();
-
-                const email =
-                    document.getElementById("email").value.trim();
-
-                const password =
-                    document.getElementById("password").value;
-
-                const selectedRole =
-                    document.querySelector(
-                        'input[name="account-type"]:checked'
-                    ).value;
-
-                const message =
-                    document.getElementById("message");
-
-                const loginButton =
-                    document.getElementById("login-button");
-
-                const originalButtonHTML =
-                    loginButton.innerHTML;
+            <span class="brand-tag">
+                WELCOME BACK
+            </span>
 
 
-                message.textContent = "";
+            <h1>
+                Your world of
+                <span>shopping.</span>
+            </h1>
 
 
-                /* Loading state */
+            <p class="brand-description">
 
-                loginButton.disabled = true;
+                Discover products from trusted sellers,
+                manage your orders, save your favourites,
+                and enjoy a seamless shopping experience.
 
-                loginButton.innerHTML = `
-                    <i class="fa-solid fa-spinner fa-spin"></i>
-                    <span>Signing In...</span>
-                `;
+            </p>
 
 
-                try {
+            <div class="benefits">
 
-                    const response = await fetch(
+
+                <div class="benefit">
+
+                    <div class="benefit-icon">
+
+                        <i class="fa-solid fa-cart-shopping"></i>
+
+                    </div>
+
+                    <div class="benefit-text">
+
+                        <strong>Smart Shopping</strong>
+
+                        <span>
+                            Find products from multiple sellers.
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="benefit">
+
+                    <div class="benefit-icon">
+
+                        <i class="fa-solid fa-box"></i>
+
+                    </div>
+
+                    <div class="benefit-text">
+
+                        <strong>Easy Order Tracking</strong>
+
+                        <span>
+                            Keep track of your purchases with ease.
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="benefit">
+
+                    <div class="benefit-icon">
+
+                        <i class="fa-solid fa-shield-halved"></i>
+
+                    </div>
+
+                    <div class="benefit-text">
+
+                        <strong>Secure Shopping</strong>
+
+                        <span>
+                            Your account stays protected.
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================================
+         LOGIN
+    ========================================== -->
+
+    <section class="login-area">
+
+        <div class="login-card">
+
+
+            <div class="login-header">
+
+                <h2>Welcome back</h2>
+
+                <p>
+                    Sign in to continue to your ShopSphere account.
+                </p>
+
+            </div>
+
+
+            <form id="login-form">
+
+
+                <!-- ACCOUNT TYPE -->
+
+                <span class="login-as-label">
+                    Login as
+                </span>
+
+
+                <div class="account-selector">
+
+
+                    <div class="account-option">
+
+                        <input
+                            type="radio"
+                            id="customer"
+                            name="account-type"
+                            value="customer"
+                            checked
+                        >
+
+                        <label for="customer">
+
+                            <div class="account-icon">
+
+                                <i class="fa-solid fa-user"></i>
+
+                            </div>
+
+                            <div class="account-info">
+
+                                <strong>Customer</strong>
+
+                                <span>
+                                    Shop & manage orders
+                                </span>
+
+                            </div>
+
+                        </label>
+
+                    </div>
+
+
+                    <div class="account-option">
+
+                        <input
+                            type="radio"
+                            id="seller"
+                            name="account-type"
+                            value="seller"
+                        >
+
+                        <label for="seller">
+
+                            <div class="account-icon">
+
+                                <i class="fa-solid fa-store"></i>
+
+                            </div>
+
+                            <div class="account-info">
+
+                                <strong>Seller</strong>
+
+                                <span>
+                                    Manage your store
+                                </span>
+
+                            </div>
+
+                        </label>
+
+                    </div>
+
+
+                </div>
+
+
+                <!-- EMAIL -->
+
+                <div class="form-group">
+
+                    <label for="email">
+                        Email Address
+                    </label>
+
+                    <div class="input-wrapper">
+
+                        <i class="fa-solid fa-envelope"></i>
+
+                        <input
+                            type="email"
+                            id="email"
+                            placeholder="Enter your email"
+                            required
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <!-- PASSWORD -->
+
+                <div class="form-group">
+
+                    <label for="password">
+                        Password
+                    </label>
+
+                    <div class="input-wrapper">
+
+                        <i class="fa-solid fa-lock"></i>
+
+                        <input
+                            type="password"
+                            id="password"
+                            placeholder="Enter your password"
+                            required
+                        >
+
+                        <button
+                            type="button"
+                            class="password-toggle"
+                            id="password-toggle"
+                            aria-label="Show password"
+                        >
+
+                            <i class="fa-solid fa-eye"></i>
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <!-- OPTIONS -->
+
+                <div class="login-options">
+
+                    <label class="remember">
+
+                        <input
+                            type="checkbox"
+                            id="remember"
+                        >
+
+                        Remember me
+
+                    </label>
+
+
+                    <a href="#" class="forgot-password">
+                        Forgot password?
+                    </a>
+
+                </div>
+
+
+                <!-- SUBMIT -->
+
+                <button
+                    type="submit"
+                    class="login-submit"
+                    id="login-button"
+                >
+
+                    <i class="fa-solid fa-arrow-right-to-bracket"></i>
+
+                    <span>Sign In</span>
+
+                </button>
+
+
+            </form>
+
+
+            <p id="message"></p>
+
+
+            <div class="security-note">
+
+                <i class="fa-solid fa-lock"></i>
+
+                Secure login powered by ShopSphere
+
+            </div>
+
+
+            <a href="index.html" class="back-home">
+
+                <i class="fa-solid fa-arrow-left"></i>
+
+                Back to ShopSphere
+
+            </a>
+
+
+        </div>
+
+    </section>
+
+
+</main>
+
+
+<!-- =========================================
+     LOGIN JAVASCRIPT
+========================================= -->
+
+<script>
+
+    /* =========================================
+       SHOPSPHERE BACKEND
+    ========================================== */
+
+    const API_URL =
+        "https://shopsphere-backend-4aji.onrender.com";
+
+
+    /* =========================================
+       PASSWORD SHOW / HIDE
+    ========================================== */
+
+    const passwordInput =
+        document.getElementById("password");
+
+    const passwordToggle =
+        document.getElementById("password-toggle");
+
+
+    passwordToggle.addEventListener("click", () => {
+
+        const icon =
+            passwordToggle.querySelector("i");
+
+
+        if (passwordInput.type === "password") {
+
+            passwordInput.type = "text";
+
+            icon.classList.remove("fa-eye");
+
+            icon.classList.add("fa-eye-slash");
+
+            passwordToggle.setAttribute(
+                "aria-label",
+                "Hide password"
+            );
+
+        }
+
+        else {
+
+            passwordInput.type = "password";
+
+            icon.classList.remove("fa-eye-slash");
+
+            icon.classList.add("fa-eye");
+
+            passwordToggle.setAttribute(
+                "aria-label",
+                "Show password"
+            );
+
+        }
+
+    });
+
+
+    /* =========================================
+       LOGIN
+    ========================================== */
+
+    document
+        .getElementById("login-form")
+        .addEventListener("submit", async (e) => {
+
+            e.preventDefault();
+
+
+            const email =
+                document
+                    .getElementById("email")
+                    .value
+                    .trim();
+
+
+            const password =
+                document
+                    .getElementById("password")
+                    .value;
+
+
+            const selectedRole =
+                document.querySelector(
+                    'input[name="account-type"]:checked'
+                ).value;
+
+
+            const message =
+                document.getElementById("message");
+
+
+            const loginButton =
+                document.getElementById("login-button");
+
+
+            const originalButtonHTML =
+                loginButton.innerHTML;
+
+
+            message.textContent = "";
+
+
+            /* Loading state */
+
+            loginButton.disabled = true;
+
+
+            loginButton.innerHTML = `
+
+                <i class="fa-solid fa-spinner fa-spin"></i>
+
+                <span>Signing In...</span>
+
+            `;
+
+
+            try {
+
+                const response =
+                    await fetch(
                         `${API_URL}/api/login`,
                         {
                             method: "POST",
@@ -897,89 +999,99 @@
                     );
 
 
-                    const data =
-                        await response.json();
+                const data =
+                    await response.json();
 
 
-                    if (!response.ok) {
+                if (!response.ok) {
 
-                        throw new Error(
-                            data.error || "Login failed."
-                        );
-
-                    }
-
-
-                    /* ---------------------------------
-                       VERIFY CUSTOMER / SELLER SELECTION
-                    ---------------------------------- */
-
-                    if (
-                        selectedRole !== data.user.role &&
-                        data.user.role !== "admin"
-                    ) {
-
-                        throw new Error(
-                            `This account is registered as a ${data.user.role}. Please select "${data.user.role}" and try again.`
-                        );
-
-                    }
-
-
-                    /* ---------------------------------
-                       SAVE USER
-                    ---------------------------------- */
-
-                    localStorage.setItem(
-                        "shopsphere_user",
-                        JSON.stringify(data.user)
+                    throw new Error(
+                        data.error || "Login failed."
                     );
 
+                }
 
-                    /* ---------------------------------
-                       ROLE BASED REDIRECTION
-                    ---------------------------------- */
 
-                    if (data.user.role === "seller") {
+                /* =================================
+                   VERIFY ACCOUNT TYPE
+                ================================= */
 
-                        window.location.href =
-                            "seller.html";
+                if (
+                    selectedRole !== data.user.role &&
+                    data.user.role !== "admin"
+                ) {
 
-                    }
-
-                    else if (data.user.role === "admin") {
-
-                        window.location.href =
-                            "admin.html";
-
-                    }
-
-                    else {
-
-                        window.location.href =
-                            "index.html";
-
-                    }
-
+                    throw new Error(
+                        `This account is registered as a ${data.user.role}. Please select "${data.user.role}" and try again.`
+                    );
 
                 }
 
-                catch (error) {
 
-                    message.textContent =
-                        "❌ " + error.message;
+                /* =================================
+                   SAVE LOGGED-IN USER
+                ================================= */
 
-                    loginButton.disabled = false;
+                localStorage.setItem(
+                    "shopsphere_user",
+                    JSON.stringify(data.user)
+                );
 
-                    loginButton.innerHTML =
-                        originalButtonHTML;
+
+                /* =================================
+                   ROLE BASED REDIRECTION
+                ================================= */
+
+                if (data.user.role === "seller") {
+
+                    window.location.href =
+                        "seller.html";
 
                 }
 
-            });
+                else if (data.user.role === "admin") {
 
-    </script>
+                    window.location.href =
+                        "admin.html";
+
+                }
+
+                else {
+
+                    window.location.href =
+                        "index.html";
+
+                }
+
+
+            }
+
+            catch (error) {
+
+                console.error(
+                    "Login error:",
+                    error
+                );
+
+
+                message.textContent =
+                    "❌ " + error.message;
+
+
+                loginButton.disabled = false;
+
+
+                loginButton.innerHTML =
+                    originalButtonHTML;
+
+            }
+
+        });
+
+</script>
+
 
 </body>
 
 </html>
+```
