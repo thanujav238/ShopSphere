@@ -15,59 +15,72 @@
 
     <link rel="stylesheet" href="style.css">
 
-
     <style>
 
-        /* =========================================
-           CHECKOUT PAGE IMPROVEMENTS
-        ========================================= */
+        /* =====================================================
+           SHOPSPHERE CHECKOUT
+        ===================================================== */
 
         .checkout-page {
             min-height: 100vh;
-            padding: 45px 20px 70px;
+            padding: 50px 20px 80px;
+            background: #08090d;
+            color: #f5f5f7;
         }
 
         .checkout-container {
             width: min(1180px, 100%);
-            margin: auto;
+            margin: 0 auto;
         }
 
 
-        /* =========================================
+        /* =====================================================
            HEADER
-        ========================================= */
+        ===================================================== */
 
         .checkout-header {
             text-align: center;
-            margin-bottom: 40px;
+            margin-bottom: 42px;
+        }
+
+        .checkout-header .section-label {
+            display: inline-block;
+            margin-bottom: 12px;
+            color: #a78bfa;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 2px;
         }
 
         .checkout-header h1 {
-            margin: 8px 0 10px;
-            font-size: 38px;
+            margin: 0 0 10px;
+            color: #ffffff;
+            font-size: clamp(30px, 4vw, 42px);
+            font-weight: 800;
+            line-height: 1.1;
         }
 
         .checkout-header p {
             margin: 0;
-            color: #777;
-            font-size: 15px;
+            color: #9a9ca8;
+            font-size: 14px;
         }
 
 
-        /* =========================================
-           CHECKOUT LAYOUT
-        ========================================= */
+        /* =====================================================
+           MAIN LAYOUT
+        ===================================================== */
 
         .checkout-layout {
             display: grid;
-            grid-template-columns: minmax(0, 1.6fr) minmax(320px, 0.85fr);
+            grid-template-columns: minmax(0, 1.55fr) minmax(320px, 0.85fr);
             gap: 28px;
             align-items: start;
         }
 
         .checkout-left {
             display: grid;
-            gap: 24px;
+            gap: 22px;
             min-width: 0;
         }
 
@@ -77,56 +90,69 @@
         }
 
 
-        /* =========================================
+        /* =====================================================
            CARDS
-        ========================================= */
+        ===================================================== */
 
         .checkout-card {
-            background: #ffffff;
+            background: #11131a !important;
+            border: 1px solid #242631 !important;
             border-radius: 18px;
-            padding: 26px;
-            border: 1px solid rgba(0,0,0,0.07);
-            box-shadow: 0 10px 35px rgba(0,0,0,0.06);
+            padding: 28px;
+            box-shadow: 0 15px 45px rgba(0, 0, 0, 0.22);
+            color: #f5f5f7 !important;
         }
 
         .checkout-card-header {
             display: flex;
             align-items: center;
             gap: 14px;
-            margin-bottom: 25px;
+            margin-bottom: 26px;
+        }
+
+        .checkout-card-header > div:last-child {
+            min-width: 0;
         }
 
         .checkout-card-header h2 {
-            margin: 0 0 4px;
-            font-size: 19px;
+            margin: 0 0 5px;
+            color: #ffffff !important;
+            font-size: 18px;
+            font-weight: 750;
         }
 
         .checkout-card-header p {
             margin: 0;
-            color: #888;
+            color: #8f929f !important;
             font-size: 13px;
+            line-height: 1.5;
         }
 
         .checkout-icon {
             width: 44px;
             height: 44px;
             flex-shrink: 0;
+
             display: flex;
             align-items: center;
             justify-content: center;
+
             border-radius: 12px;
-            background: #f1efff;
-            color: #6255d9;
+
+            background: rgba(139, 92, 246, 0.13) !important;
+            color: #a78bfa !important;
+
+            font-size: 16px;
         }
 
 
-        /* =========================================
-           FORM
-        ========================================= */
+        /* =====================================================
+           DELIVERY FORM
+        ===================================================== */
 
         #checkout-form {
             display: grid;
-            gap: 18px;
+            gap: 19px;
         }
 
         .checkout-card .form-row {
@@ -141,27 +167,50 @@
 
         .checkout-card .form-group {
             display: grid;
-            gap: 7px;
+            gap: 8px;
+            min-width: 0;
         }
 
         .checkout-card label {
-            font-size: 13px;
+            color: #dcdde3 !important;
+            font-size: 12px;
             font-weight: 700;
-            color: #333;
         }
 
         .checkout-card input,
         .checkout-card textarea {
             width: 100%;
             box-sizing: border-box;
+
             padding: 13px 14px;
-            border: 1px solid #dedede;
+
+            border: 1px solid #30333e !important;
             border-radius: 10px;
-            background: #fff;
+
+            background: #181a22 !important;
+            color: #ffffff !important;
+
             outline: none;
+
             font-family: inherit;
             font-size: 14px;
-            transition: 0.2s ease;
+
+            transition: border-color 0.2s ease,
+                        box-shadow 0.2s ease,
+                        background 0.2s ease;
+        }
+
+        .checkout-card input::placeholder,
+        .checkout-card textarea::placeholder {
+            color: #6f727e !important;
+            opacity: 1;
+        }
+
+        .checkout-card input:focus,
+        .checkout-card textarea:focus {
+            border-color: #8b5cf6 !important;
+            background: #1b1d27 !important;
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.13);
         }
 
         .checkout-card textarea {
@@ -169,16 +218,10 @@
             resize: vertical;
         }
 
-        .checkout-card input:focus,
-        .checkout-card textarea:focus {
-            border-color: #6255d9;
-            box-shadow: 0 0 0 4px rgba(98,85,217,0.09);
-        }
 
-
-        /* =========================================
-           PAYMENT OPTIONS
-        ========================================= */
+        /* =====================================================
+           PAYMENT
+        ===================================================== */
 
         .payment-options {
             display: grid;
@@ -200,64 +243,95 @@
 
         .payment-content {
             min-height: 72px;
+
             display: flex;
             align-items: center;
             gap: 13px;
-            padding: 13px;
-            border: 1px solid #dedede;
+
+            padding: 14px;
+
+            border: 1px solid #30333e;
             border-radius: 12px;
+
+            background: #181a22;
+
             transition: 0.2s ease;
+        }
+
+        .payment-content:hover {
+            border-color: #575966;
+            transform: translateY(-1px);
         }
 
         .payment-icon {
             width: 38px;
             height: 38px;
             flex-shrink: 0;
+
             display: flex;
             align-items: center;
             justify-content: center;
+
             border-radius: 9px;
-            background: #f5f5f5;
-            color: #555;
+
+            background: #242631;
+            color: #a1a3ad;
+
+            transition: 0.2s ease;
         }
 
         .payment-content strong {
             display: block;
-            margin-bottom: 3px;
+            margin-bottom: 4px;
+
+            color: #ffffff !important;
             font-size: 14px;
+            font-weight: 700;
         }
 
         .payment-content span {
             display: block;
-            color: #888;
+
+            color: #858894 !important;
             font-size: 12px;
+            line-height: 1.4;
         }
 
         .payment-option input:checked + .payment-content {
-            border-color: #6255d9;
-            background: #f7f6ff;
-            box-shadow: 0 0 0 2px rgba(98,85,217,0.10);
+            border-color: #8b5cf6;
+            background: rgba(139, 92, 246, 0.09);
+            box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.10);
         }
 
         .payment-option input:checked + .payment-content .payment-icon {
-            background: #6255d9;
-            color: white;
+            background: #8b5cf6;
+            color: #ffffff;
         }
 
 
-        /* =========================================
+        /* =====================================================
            ORDER SUMMARY
-        ========================================= */
+        ===================================================== */
 
         .checkout-summary .checkout-card {
-            padding: 24px;
+            padding: 25px;
         }
 
         #checkout-items {
             display: grid;
             gap: 12px;
-            max-height: 320px;
+
+            max-height: 330px;
             overflow-y: auto;
+        }
+
+        #checkout-items::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        #checkout-items::-webkit-scrollbar-thumb {
+            background: #353743;
+            border-radius: 10px;
         }
 
         .checkout-loading {
@@ -265,72 +339,96 @@
             justify-content: center;
             align-items: center;
             gap: 8px;
+
             min-height: 100px;
-            color: #888;
+
+            color: #858894 !important;
             font-size: 13px;
+        }
+
+        .checkout-loading i {
+            color: #a78bfa;
         }
 
         .summary-divider {
             height: 1px;
-            margin: 18px 0;
-            background: #eeeeee;
+            margin: 19px 0;
+            background: #292c36;
         }
 
         .summary-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
+
             gap: 15px;
-            margin: 12px 0;
+            margin: 13px 0;
+
             font-size: 14px;
         }
 
         .summary-row span {
-            color: #777;
+            color: #92949f !important;
         }
 
         .summary-row strong {
-            color: #222;
+            color: #f5f5f7 !important;
         }
 
         .free-delivery {
-            color: #20a56b !important;
+            color: #39c98a !important;
         }
 
         .summary-total {
             display: flex;
             justify-content: space-between;
             align-items: center;
+
             gap: 15px;
+
+            color: #ffffff !important;
             font-size: 17px;
+            font-weight: 700;
         }
 
         .summary-total strong {
+            color: #ffffff !important;
             font-size: 23px;
         }
 
 
-        /* =========================================
+        /* =====================================================
            PLACE ORDER
-        ========================================= */
+        ===================================================== */
 
         .place-order-btn {
             width: 100%;
+
             margin-top: 22px;
             padding: 15px;
+
             border: none;
             border-radius: 11px;
-            background: #171717;
-            color: white;
-            font-size: 15px;
-            font-weight: 700;
+
+            background: #8b5cf6 !important;
+            color: #ffffff !important;
+
+            font-size: 14px;
+            font-weight: 750;
+
             cursor: pointer;
+
             transition: 0.2s ease;
         }
 
         .place-order-btn:hover {
+            background: #7c4de6 !important;
             transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            box-shadow: 0 12px 28px rgba(139, 92, 246, 0.25);
+        }
+
+        .place-order-btn:active {
+            transform: translateY(0);
         }
 
         .place-order-btn i {
@@ -341,47 +439,70 @@
             display: flex;
             justify-content: center;
             align-items: center;
+
             gap: 7px;
+
             margin: 15px 0 0;
-            color: #888;
+
+            color: #737681 !important;
+
             font-size: 11px;
             text-align: center;
             line-height: 1.5;
         }
 
         .secure-note i {
-            color: #20a56b;
+            color: #39c98a;
         }
 
         .back-cart {
             display: flex;
             justify-content: center;
             align-items: center;
+
             gap: 7px;
-            margin-top: 15px;
-            color: #666;
+
+            margin-top: 16px;
+
+            color: #8e909b !important;
+
             text-decoration: none;
+
             font-size: 13px;
             font-weight: 600;
+
+            transition: 0.2s ease;
         }
 
         .back-cart:hover {
-            color: #6255d9;
+            color: #a78bfa !important;
         }
 
 
-        /* =========================================
-           NAVBAR
-        ========================================= */
+        /* =====================================================
+           CART ITEM TEXT
+           Keeps dynamically-created checkout items visible
+        ===================================================== */
 
-        .checkout-page ~ .footer {
-            margin-top: 0;
+        #checkout-items * {
+            color: inherit;
+        }
+
+        #checkout-items h3,
+        #checkout-items h4,
+        #checkout-items strong {
+            color: #ffffff !important;
+        }
+
+        #checkout-items p,
+        #checkout-items span {
+            color: #9698a4 !important;
         }
 
 
-        /* =========================================
+        /* =====================================================
            RESPONSIVE
-        ========================================= */
+        ===================================================== */
 
         @media (max-width: 900px) {
 
@@ -396,10 +517,14 @@
         }
 
 
-        @media (max-width: 600px) {
+        @media (max-width: 650px) {
 
             .checkout-page {
-                padding: 30px 15px 50px;
+                padding: 35px 14px 60px;
+            }
+
+            .checkout-header {
+                margin-bottom: 30px;
             }
 
             .checkout-header h1 {
@@ -407,7 +532,8 @@
             }
 
             .checkout-card {
-                padding: 20px;
+                padding: 21px !important;
+                border-radius: 15px;
             }
 
             .checkout-card .form-row,
@@ -417,6 +543,28 @@
 
             .payment-options {
                 grid-template-columns: 1fr;
+            }
+
+            .checkout-card-header {
+                margin-bottom: 22px;
+            }
+
+        }
+
+
+        @media (max-width: 400px) {
+
+            .checkout-header h1 {
+                font-size: 27px;
+            }
+
+            .checkout-card {
+                padding: 18px !important;
+            }
+
+            .checkout-icon {
+                width: 40px;
+                height: 40px;
             }
 
         }
@@ -429,7 +577,9 @@
 <body>
 
 
-    <!-- NAVBAR -->
+    <!-- =====================================================
+         NAVBAR
+    ===================================================== -->
 
     <nav class="navbar">
 
@@ -443,23 +593,16 @@
 
             </a>
 
-
             <div class="nav-links">
 
                 <a href="index.html">
-
                     <i class="fa-solid fa-house"></i>
-
                     Home
-
                 </a>
 
                 <a href="cart.html">
-
                     <i class="fa-solid fa-cart-shopping"></i>
-
                     Cart
-
                 </a>
 
             </div>
@@ -469,8 +612,9 @@
     </nav>
 
 
-
-    <!-- CHECKOUT -->
+    <!-- =====================================================
+         CHECKOUT
+    ===================================================== -->
 
     <main class="checkout-page">
 
@@ -496,25 +640,24 @@
             </div>
 
 
-
             <div class="checkout-layout">
 
 
-                <!-- LEFT -->
+                <!-- =================================================
+                     LEFT COLUMN
+                ================================================= -->
 
                 <div class="checkout-left">
 
 
-                    <!-- DELIVERY -->
+                    <!-- DELIVERY ADDRESS -->
 
                     <section class="checkout-card">
 
                         <div class="checkout-card-header">
 
                             <div class="checkout-icon">
-
                                 <i class="fa-solid fa-location-dot"></i>
-
                             </div>
 
                             <div>
@@ -531,7 +674,6 @@
 
 
                         <form id="checkout-form">
-
 
                             <div class="form-row">
 
@@ -640,7 +782,6 @@
                     </section>
 
 
-
                     <!-- PAYMENT -->
 
                     <section class="checkout-card">
@@ -648,9 +789,7 @@
                         <div class="checkout-card-header">
 
                             <div class="checkout-icon">
-
                                 <i class="fa-solid fa-credit-card"></i>
-
                             </div>
 
                             <div>
@@ -681,9 +820,7 @@
                                 <div class="payment-content">
 
                                     <div class="payment-icon">
-
                                         <i class="fa-solid fa-mobile-screen-button"></i>
-
                                     </div>
 
                                     <div>
@@ -701,7 +838,6 @@
                             </label>
 
 
-
                             <label class="payment-option">
 
                                 <input
@@ -713,9 +849,7 @@
                                 <div class="payment-content">
 
                                     <div class="payment-icon">
-
                                         <i class="fa-solid fa-credit-card"></i>
-
                                     </div>
 
                                     <div>
@@ -733,7 +867,6 @@
                             </label>
 
 
-
                             <label class="payment-option">
 
                                 <input
@@ -745,9 +878,7 @@
                                 <div class="payment-content">
 
                                     <div class="payment-icon">
-
                                         <i class="fa-solid fa-building-columns"></i>
-
                                     </div>
 
                                     <div>
@@ -765,7 +896,6 @@
                             </label>
 
 
-
                             <label class="payment-option">
 
                                 <input
@@ -777,9 +907,7 @@
                                 <div class="payment-content">
 
                                     <div class="payment-icon">
-
                                         <i class="fa-solid fa-money-bill"></i>
-
                                     </div>
 
                                     <div>
@@ -803,8 +931,9 @@
                 </div>
 
 
-
-                <!-- RIGHT SUMMARY -->
+                <!-- =================================================
+                     RIGHT COLUMN
+                ================================================= -->
 
                 <aside class="checkout-summary">
 
@@ -814,9 +943,7 @@
                         <div class="checkout-card-header">
 
                             <div class="checkout-icon">
-
                                 <i class="fa-solid fa-receipt"></i>
-
                             </div>
 
                             <div>
@@ -838,7 +965,9 @@
 
                                 <i class="fa-solid fa-spinner fa-spin"></i>
 
-                                Loading cart...
+                                <span>
+                                    Loading cart...
+                                </span>
 
                             </div>
 
@@ -931,8 +1060,9 @@
     </main>
 
 
-
-    <!-- FOOTER -->
+    <!-- =====================================================
+         FOOTER
+    ===================================================== -->
 
     <footer class="footer">
 
@@ -971,4 +1101,5 @@
     <script src="checkout.js"></script>
 
 </body>
+
 </html>

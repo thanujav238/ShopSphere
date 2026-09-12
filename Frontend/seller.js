@@ -1,9 +1,10 @@
-const API_URL = "https://shopsphere-backend-4aji.onrender.com";
+const API_URL =
+    "https://shopsphere-backend-4aji.onrender.com";
 
 
-// ==========================================
+// ============================================================
 // GET LOGGED-IN SELLER
-// ==========================================
+// ============================================================
 
 function getLoggedInSeller() {
 
@@ -16,7 +17,8 @@ function getLoggedInSeller() {
 
     try {
 
-        const user = JSON.parse(userData);
+        const user =
+            JSON.parse(userData);
 
         if (
             user.role !== "seller" ||
@@ -43,19 +45,69 @@ function getLoggedInSeller() {
 }
 
 
+// ============================================================
+// PRODUCT IMAGE HELPER
+// ============================================================
 
-// ==========================================
+function getProductImage(productName) {
+
+    const name =
+        String(productName || "").toLowerCase();
+
+    if (name.includes("headphone")) {
+        return "images/wireless-headphones.jpg";
+    }
+
+    if (name.includes("watch")) {
+        return "images/smartwatch.jpg";
+    }
+
+    if (name.includes("mouse")) {
+        return "images/gaming-mouse.jpg";
+    }
+
+    if (
+        name.includes("hoodie") ||
+        name.includes("shirt")
+    ) {
+        return "images/oversized-hoodie.jpg";
+    }
+
+    if (
+        name.includes("sneaker") ||
+        name.includes("shoe")
+    ) {
+        return "images/classic-sneakers.jpg";
+    }
+
+    if (
+        name.includes("organizer") ||
+        name.includes("storage")
+    ) {
+        return "images/storage-organizer.jpg";
+    }
+
+    if (name.includes("lamp")) {
+        return "images/table-lamp.jpg";
+    }
+
+    return "images/wireless-headphones.jpg";
+}
+
+
+// ============================================================
 // LOAD SELLER DASHBOARD
-// ==========================================
+// ============================================================
 
 async function loadSellerDashboard() {
 
-    const user = getLoggedInSeller();
+    const user =
+        getLoggedInSeller();
 
     if (!user) {
 
         alert(
-            "⚠️ Please sign in as a seller."
+            "Please sign in as a seller."
         );
 
         window.location.href =
@@ -64,7 +116,6 @@ async function loadSellerDashboard() {
         return;
     }
 
-
     try {
 
         const response =
@@ -72,97 +123,154 @@ async function loadSellerDashboard() {
                 `${API_URL}/api/seller/dashboard/${user.seller_id}`
             );
 
-
         if (!response.ok) {
 
             throw new Error(
-                "Failed to load seller dashboard"
+                "Failed to load seller dashboard."
             );
-
         }
-
 
         const data =
             await response.json();
 
 
-        // Store information
-        if (data.store) {
+        // ====================================================
+        // STORE
+        // ====================================================
 
+        const storeName =
             document.getElementById(
                 "store-name"
-            ).textContent =
-                data.store.store_name ||
-                "My Store";
+            );
 
+        if (
+            storeName &&
+            data.seller
+        ) {
+
+            storeName.textContent =
+                data.seller.store_name ||
+                "My Store";
         }
 
 
-        // Dashboard statistics
-        if (data.stats) {
+        // ====================================================
+        // STATISTICS
+        // ====================================================
 
+        const stats =
+            data.statistics || {};
+
+        const totalProducts =
             document.getElementById(
                 "total-products"
-            ).textContent =
-                data.stats.total_products || 0;
+            );
 
-
+        const totalStock =
             document.getElementById(
                 "total-stock"
-            ).textContent =
-                data.stats.total_stock || 0;
+            );
 
-
+        const totalOrders =
             document.getElementById(
                 "total-orders"
-            ).textContent =
-                data.stats.total_orders || 0;
+            );
 
-
+        const totalSales =
             document.getElementById(
                 "total-sales"
-            ).textContent =
-                `₹${Number(
-                    data.stats.total_sales || 0
-                ).toLocaleString("en-IN")}`;
+            );
 
+
+        if (totalProducts) {
+
+            totalProducts.textContent =
+                Number(
+                    stats.total_products || 0
+                );
         }
 
 
-        // Inventory
+        if (totalStock) {
+
+            totalStock.textContent =
+                Number(
+                    stats.total_stock || 0
+                ).toLocaleString("en-IN");
+        }
+
+
+        if (totalOrders) {
+
+            totalOrders.textContent =
+                Number(
+                    stats.total_orders || 0
+                ).toLocaleString("en-IN");
+        }
+
+
+        if (totalSales) {
+
+            totalSales.textContent =
+                `₹${Number(
+                    stats.total_sales || 0
+                ).toLocaleString("en-IN")}`;
+        }
+
+
+        // ====================================================
+        // INVENTORY
+        // ====================================================
+
         displayInventory(
             data.inventory || []
         );
 
 
-        // Low stock products
-        displayLowStock(
-            data.low_stock || []
+        // ====================================================
+        // SALES
+        // ====================================================
+
+        displaySalesSummary(
+            stats
         );
-
-
-        // Sales data
-        displaySales(
-            data.sales || []
-        );
-
 
     } catch (error) {
 
-        console.error(error);
-
-        alert(
-            `❌ ${error.message}`
+        console.error(
+            "Dashboard error:",
+            error
         );
 
+
+        const inventory =
+            document.getElementById(
+                "inventory-container"
+            );
+
+        if (inventory) {
+
+            inventory.innerHTML = `
+
+                <div class="empty-state">
+
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+
+                    <p>
+                        Unable to load inventory.
+                    </p>
+
+                </div>
+
+            `;
+        }
     }
 }
 
 
-
-// ==========================================
+// ============================================================
 // DISPLAY INVENTORY
-// ==========================================
+// ============================================================
 
 function displayInventory(inventory) {
 
@@ -171,8 +279,9 @@ function displayInventory(inventory) {
             "inventory-container"
         );
 
-
-    if (!container) return;
+    if (!container) {
+        return;
+    }
 
 
     if (
@@ -181,10 +290,17 @@ function displayInventory(inventory) {
     ) {
 
         container.innerHTML = `
+
             <div class="empty-state">
+
                 <i class="fa-solid fa-box-open"></i>
-                <p>No products found.</p>
+
+                <p>
+                    No products found.
+                </p>
+
             </div>
+
         `;
 
         return;
@@ -199,29 +315,61 @@ function displayInventory(inventory) {
         const item =
             document.createElement("div");
 
-
         item.className =
             "inventory-item";
+
+
+        const image =
+            getProductImage(
+                product.product_name
+            );
+
+
+        const quantity =
+            Number(
+                product.quantity || 0
+            );
 
 
         item.innerHTML = `
 
             <div class="inventory-product">
 
-                <strong>
-                    ${product.product_name}
-                </strong>
+                <img
+                    src="${image}"
+                    alt="${escapeHTML(
+                        product.product_name
+                    )}"
+                    class="inventory-product-image"
+                    onerror="this.style.display='none'"
+                >
 
-                <span>
-                    ${product.brand || ""}
-                </span>
+                <div class="inventory-product-info">
+
+                    <strong>
+                        ${escapeHTML(
+                            product.product_name
+                        )}
+                    </strong>
+
+                    <span>
+                        ${escapeHTML(
+                            product.brand ||
+                            "ShopSphere"
+                        )}
+                    </span>
+
+                </div>
 
             </div>
 
 
             <div class="inventory-category">
 
-                ${product.category_name || "N/A"}
+                ${escapeHTML(
+                    product.category_name ||
+                    "N/A"
+                )}
 
             </div>
 
@@ -235,85 +383,43 @@ function displayInventory(inventory) {
             </div>
 
 
-            <div class="inventory-stock">
-
-                ${product.quantity || 0}
-
-            </div>
-
-        `;
-
-
-        container.appendChild(item);
-
-    });
-}
-
-
-
-// ==========================================
-// DISPLAY LOW STOCK PRODUCTS
-// ==========================================
-
-function displayLowStock(products) {
-
-    const container =
-        document.getElementById(
-            "low-stock-container"
-        );
-
-
-    if (!container) return;
-
-
-    if (
-        !products ||
-        products.length === 0
-    ) {
-
-        container.innerHTML = `
-            <div class="empty-state">
-                <i class="fa-solid fa-circle-check"></i>
-                <p>No low-stock products.</p>
-            </div>
-        `;
-
-        return;
-    }
-
-
-    container.innerHTML = "";
-
-
-    products.forEach(product => {
-
-        const item =
-            document.createElement("div");
-
-
-        item.className =
-            "low-stock-item";
-
-
-        item.innerHTML = `
-
             <div>
 
-                <strong>
-                    ${product.product_name}
-                </strong>
+                <span class="inventory-stock">
 
-                <span>
-                    ${product.brand || ""}
+                    ${quantity}
+
                 </span>
 
             </div>
 
 
-            <strong>
-                ${product.quantity || 0}
-                left
-            </strong>
+            <div class="inventory-actions">
+
+                <button
+                    class="inventory-edit-btn"
+                    type="button"
+                    title="Edit Product"
+                    onclick='openEditProduct(${JSON.stringify(product).replace(/'/g, "&#39;")})'
+                >
+
+                    <i class="fa-solid fa-pen"></i>
+
+                </button>
+
+
+                <button
+                    class="inventory-delete-btn"
+                    type="button"
+                    title="Delete Product"
+                    onclick="deleteProduct(${Number(product.product_id)})"
+                >
+
+                    <i class="fa-solid fa-trash"></i>
+
+                </button>
+
+            </div>
 
         `;
 
@@ -324,90 +430,111 @@ function displayLowStock(products) {
 }
 
 
+// ============================================================
+// ESCAPE HTML
+// ============================================================
 
-// ==========================================
-// DISPLAY SALES
-// ==========================================
+function escapeHTML(value) {
 
-function displaySales(sales) {
+    return String(value || "")
+
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+
+// ============================================================
+// SALES SUMMARY
+// ============================================================
+
+function displaySalesSummary(stats) {
 
     const container =
         document.getElementById(
             "sales-container"
         );
 
-
-    if (!container) return;
-
-
-    if (
-        !sales ||
-        sales.length === 0
-    ) {
-
-        container.innerHTML = `
-            <div class="empty-state">
-                <i class="fa-solid fa-chart-line"></i>
-                <p>No sales data available.</p>
-            </div>
-        `;
-
+    if (!container) {
         return;
     }
 
 
-    container.innerHTML = "";
+    const totalSales =
+        Number(
+            stats.total_sales || 0
+        );
 
 
-    sales.forEach(sale => {
-
-        const item =
-            document.createElement("div");
-
-
-        item.className =
-            "sales-item";
+    const totalOrders =
+        Number(
+            stats.total_orders || 0
+        );
 
 
-        item.innerHTML = `
+    container.innerHTML = `
+
+        <div class="sales-item">
 
             <div>
 
                 <strong>
-                    ${sale.product_name || "Product"}
+                    Total Revenue
                 </strong>
 
             </div>
 
+            <div>
+                ${totalOrders} orders
+            </div>
+
+            <strong>
+                ₹${totalSales.toLocaleString("en-IN")}
+            </strong>
+
+        </div>
+
+
+        <div class="sales-item">
 
             <div>
 
-                ${sale.quantity || 0} sold
+                <strong>
+                    Average Order Value
+                </strong>
 
             </div>
 
+            <div>
+                Based on completed orders
+            </div>
 
             <strong>
 
-                ₹${Number(
-                    sale.total_sales || 0
-                ).toLocaleString("en-IN")}
+                ₹${(
+                    totalOrders > 0
+                        ? totalSales / totalOrders
+                        : 0
+                ).toLocaleString(
+                    "en-IN",
+                    {
+                        maximumFractionDigits: 0
+                    }
+                )}
 
             </strong>
 
-        `;
+        </div>
 
-
-        container.appendChild(item);
-
-    });
+    `;
 }
 
 
-
-// ==========================================
-// ADD PRODUCT
-// ==========================================
+// ============================================================
+// ADD PRODUCT MODAL
+// ============================================================
 
 function openAddProductModal() {
 
@@ -416,36 +543,39 @@ function openAddProductModal() {
             "product-modal"
         );
 
-
     if (modal) {
 
-        modal.style.display = "flex";
-
+        modal.style.display =
+            "flex";
     }
 }
 
 
-
-function closeAddProductModal() {
+function closeProductModal() {
 
     const modal =
         document.getElementById(
             "product-modal"
         );
 
-
     if (modal) {
 
-        modal.style.display = "none";
-
+        modal.style.display =
+            "none";
     }
 }
 
 
+// Backward compatibility
+function closeAddProductModal() {
 
-// ==========================================
-// ADD PRODUCT FORM
-// ==========================================
+    closeProductModal();
+}
+
+
+// ============================================================
+// ADD PRODUCT
+// ============================================================
 
 document.addEventListener(
     "DOMContentLoaded",
@@ -456,13 +586,14 @@ document.addEventListener(
                 "add-product-form"
             );
 
-
-        if (!form) return;
+        if (!form) {
+            return;
+        }
 
 
         form.addEventListener(
             "submit",
-            async (event) => {
+            async event => {
 
                 event.preventDefault();
 
@@ -474,7 +605,7 @@ document.addEventListener(
                 if (!user) {
 
                     alert(
-                        "⚠️ Please sign in as a seller."
+                        "Please sign in as a seller."
                     );
 
                     window.location.href =
@@ -489,14 +620,16 @@ document.addEventListener(
                     seller_id:
                         user.seller_id,
 
+                    category_id:
+                        Number(
+                            document.getElementById(
+                                "product-category"
+                            ).value
+                        ),
+
                     product_name:
                         document.getElementById(
                             "product-name"
-                        ).value.trim(),
-
-                    category:
-                        document.getElementById(
-                            "product-category"
                         ).value.trim(),
 
                     brand:
@@ -529,7 +662,6 @@ document.addEventListener(
                                 "product-reorder"
                             ).value
                         )
-
                 };
 
 
@@ -562,18 +694,17 @@ document.addEventListener(
 
                         throw new Error(
                             data.error ||
-                            "Failed to add product"
+                            "Failed to add product."
                         );
-
                     }
 
 
                     alert(
-                        "✅ Product added successfully!"
+                        "Product added successfully!"
                     );
 
 
-                    closeAddProductModal();
+                    closeProductModal();
 
 
                     form.reset();
@@ -581,15 +712,16 @@ document.addEventListener(
 
                     loadSellerDashboard();
 
-
                 } catch (error) {
 
-                    console.error(error);
-
-                    alert(
-                        `❌ ${error.message}`
+                    console.error(
+                        "Add product error:",
+                        error
                     );
 
+                    alert(
+                        error.message
+                    );
                 }
 
             }
@@ -599,10 +731,9 @@ document.addEventListener(
 );
 
 
-
-// ==========================================
+// ============================================================
 // EDIT PRODUCT
-// ==========================================
+// ============================================================
 
 function openEditProduct(product) {
 
@@ -621,7 +752,9 @@ function openEditProduct(product) {
     document.getElementById(
         "edit-product-category"
     ).value =
-        product.category || "";
+        product.category_id ||
+        product.category ||
+        "1";
 
 
     document.getElementById(
@@ -662,11 +795,10 @@ function openEditProduct(product) {
 
     if (modal) {
 
-        modal.style.display = "flex";
-
+        modal.style.display =
+            "flex";
     }
 }
-
 
 
 function closeEditProductModal() {
@@ -679,16 +811,15 @@ function closeEditProductModal() {
 
     if (modal) {
 
-        modal.style.display = "none";
-
+        modal.style.display =
+            "none";
     }
 }
 
 
-
-// ==========================================
+// ============================================================
 // UPDATE PRODUCT
-// ==========================================
+// ============================================================
 
 document.addEventListener(
     "DOMContentLoaded",
@@ -699,13 +830,14 @@ document.addEventListener(
                 "edit-product-form"
             );
 
-
-        if (!form) return;
+        if (!form) {
+            return;
+        }
 
 
         form.addEventListener(
             "submit",
-            async (event) => {
+            async event => {
 
                 event.preventDefault();
 
@@ -717,7 +849,7 @@ document.addEventListener(
                 if (!user) {
 
                     alert(
-                        "⚠️ Please sign in as a seller."
+                        "Please sign in as a seller."
                     );
 
                     window.location.href =
@@ -740,10 +872,12 @@ document.addEventListener(
                             "edit-product-name"
                         ).value.trim(),
 
-                    category:
-                        document.getElementById(
-                            "edit-product-category"
-                        ).value.trim(),
+                    category_id:
+                        Number(
+                            document.getElementById(
+                                "edit-product-category"
+                            ).value
+                        ),
 
                     brand:
                         document.getElementById(
@@ -760,28 +894,33 @@ document.addEventListener(
                             document.getElementById(
                                 "edit-product-price"
                             ).value
-                        ),
-
-                    quantity:
-                        Number(
-                            document.getElementById(
-                                "edit-product-quantity"
-                            ).value
-                        ),
-
-                    reorder_level:
-                        Number(
-                            document.getElementById(
-                                "edit-product-reorder"
-                            ).value
                         )
-
                 };
+
+
+                const quantity =
+                    Number(
+                        document.getElementById(
+                            "edit-product-quantity"
+                        ).value
+                    );
+
+
+                const reorderLevel =
+                    Number(
+                        document.getElementById(
+                            "edit-product-reorder"
+                        ).value
+                    );
 
 
                 try {
 
-                    const response =
+                    // =================================================
+                    // UPDATE PRODUCT DETAILS
+                    // =================================================
+
+                    const productResponse =
                         await fetch(
                             `${API_URL}/api/seller/products/${productId}`,
                             {
@@ -800,22 +939,63 @@ document.addEventListener(
                         );
 
 
-                    const data =
-                        await response.json();
+                    const productResult =
+                        await productResponse.json();
 
 
-                    if (!response.ok) {
+                    if (!productResponse.ok) {
 
                         throw new Error(
-                            data.error ||
-                            "Failed to update product"
+                            productResult.error ||
+                            "Failed to update product."
+                        );
+                    }
+
+
+                    // =================================================
+                    // UPDATE INVENTORY
+                    // =================================================
+
+                    const inventoryResponse =
+                        await fetch(
+                            `${API_URL}/api/seller/inventory/${productId}`,
+                            {
+                                method: "PUT",
+
+                                headers: {
+                                    "Content-Type":
+                                        "application/json"
+                                },
+
+                                body:
+                                    JSON.stringify({
+
+                                        quantity:
+                                            quantity,
+
+                                        reorder_level:
+                                            reorderLevel
+
+                                    })
+                            }
                         );
 
+
+                    const inventoryResult =
+                        await inventoryResponse.json();
+
+
+                    if (!inventoryResponse.ok) {
+
+                        throw new Error(
+                            inventoryResult.error ||
+                            "Product updated but stock could not be updated."
+                        );
                     }
 
 
                     alert(
-                        "✅ Product updated successfully!"
+                        "Product updated successfully!"
                     );
 
 
@@ -827,12 +1007,15 @@ document.addEventListener(
 
                 } catch (error) {
 
-                    console.error(error);
-
-                    alert(
-                        `❌ ${error.message}`
+                    console.error(
+                        "Update product error:",
+                        error
                     );
 
+
+                    alert(
+                        error.message
+                    );
                 }
 
             }
@@ -842,10 +1025,9 @@ document.addEventListener(
 );
 
 
-
-// ==========================================
+// ============================================================
 // DELETE PRODUCT
-// ==========================================
+// ============================================================
 
 async function deleteProduct(productId) {
 
@@ -856,7 +1038,7 @@ async function deleteProduct(productId) {
     if (!user) {
 
         alert(
-            "⚠️ Please sign in as a seller."
+            "Please sign in as a seller."
         );
 
         window.location.href =
@@ -872,7 +1054,9 @@ async function deleteProduct(productId) {
         );
 
 
-    if (!confirmed) return;
+    if (!confirmed) {
+        return;
+    }
 
 
     try {
@@ -894,14 +1078,13 @@ async function deleteProduct(productId) {
 
             throw new Error(
                 data.error ||
-                "Failed to delete product"
+                "Failed to delete product."
             );
-
         }
 
 
         alert(
-            "✅ Product deleted successfully!"
+            "Product deleted successfully!"
         );
 
 
@@ -910,42 +1093,28 @@ async function deleteProduct(productId) {
 
     } catch (error) {
 
-        console.error(error);
-
-        alert(
-            `❌ ${error.message}`
+        console.error(
+            "Delete product error:",
+            error
         );
 
+
+        alert(
+            error.message
+        );
     }
 }
 
 
-
-// ==========================================
+// ============================================================
 // UPDATE INVENTORY
-// ==========================================
+// ============================================================
 
 async function updateInventory(
     productId,
-    quantity
+    quantity,
+    reorderLevel = 5
 ) {
-
-    const user =
-        getLoggedInSeller();
-
-
-    if (!user) {
-
-        alert(
-            "⚠️ Please sign in as a seller."
-        );
-
-        window.location.href =
-            "login.html";
-
-        return;
-    }
-
 
     try {
 
@@ -960,10 +1129,16 @@ async function updateInventory(
                             "application/json"
                     },
 
-                    body: JSON.stringify({
-                        quantity:
-                            Number(quantity)
-                    })
+                    body:
+                        JSON.stringify({
+
+                            quantity:
+                                Number(quantity),
+
+                            reorder_level:
+                                Number(reorderLevel)
+
+                        })
                 }
             );
 
@@ -976,15 +1151,9 @@ async function updateInventory(
 
             throw new Error(
                 data.error ||
-                "Failed to update inventory"
+                "Failed to update inventory."
             );
-
         }
-
-
-        alert(
-            "✅ Inventory updated successfully!"
-        );
 
 
         loadSellerDashboard();
@@ -992,20 +1161,22 @@ async function updateInventory(
 
     } catch (error) {
 
-        console.error(error);
-
-        alert(
-            `❌ ${error.message}`
+        console.error(
+            "Inventory update error:",
+            error
         );
 
+
+        alert(
+            error.message
+        );
     }
 }
 
 
-
-// ==========================================
+// ============================================================
 // LOAD SELLER ORDERS
-// ==========================================
+// ============================================================
 
 async function loadSellerOrders() {
 
@@ -1014,14 +1185,6 @@ async function loadSellerOrders() {
 
 
     if (!user) {
-
-        alert(
-            "⚠️ Please sign in as a seller."
-        );
-
-        window.location.href =
-            "login.html";
-
         return;
     }
 
@@ -1030,6 +1193,11 @@ async function loadSellerOrders() {
         document.getElementById(
             "seller-orders-container"
         );
+
+
+    if (!container) {
+        return;
+    }
 
 
     try {
@@ -1043,9 +1211,8 @@ async function loadSellerOrders() {
         if (!response.ok) {
 
             throw new Error(
-                "Failed to load seller orders"
+                "Failed to load seller orders."
             );
-
         }
 
 
@@ -1061,42 +1228,41 @@ async function loadSellerOrders() {
 
     } catch (error) {
 
-        console.error(error);
+        console.error(
+            "Orders error:",
+            error
+        );
 
 
-        if (container) {
+        container.innerHTML = `
 
-            container.innerHTML = `
+            <div class="empty-state">
 
-                <div class="orders-error">
+                <i class="fa-solid fa-triangle-exclamation"></i>
 
-                    <i class="fa-solid fa-triangle-exclamation"></i>
+                <p>
+                    Unable to load orders.
+                </p>
 
-                    <p>
-                        Unable to load seller orders.
-                    </p>
+            </div>
 
-                </div>
-
-            `;
-
-        }
-
+        `;
     }
 }
 
 
-
-// ==========================================
+// ============================================================
 // DISPLAY SELLER ORDERS
-// ==========================================
+// ============================================================
 
 function displaySellerOrders(
     orders,
     container
 ) {
 
-    if (!container) return;
+    if (!container) {
+        return;
+    }
 
 
     if (
@@ -1125,117 +1291,139 @@ function displaySellerOrders(
     container.innerHTML = "";
 
 
-    orders.forEach(order => {
+    orders
+        .slice(0, 6)
+        .forEach(order => {
 
-        const item =
-            document.createElement("div");
-
-
-        item.className =
-            "seller-order-item";
+            const item =
+                document.createElement("div");
 
 
-        const status =
-            (
-                order.order_status ||
-                "pending"
-            ).toLowerCase();
+            item.className =
+                "seller-order-item";
 
 
-        item.innerHTML = `
-
-            <div>
-
-                <strong>
-                    Order #${order.order_id}
-                </strong>
-
-                <span>
-                    ${order.product_name || "Product"}
-                </span>
-
-            </div>
+            const status =
+                String(
+                    order.order_status ||
+                    "pending"
+                ).toLowerCase();
 
 
-            <div>
-
-                Qty:
-                ${order.quantity || 0}
-
-            </div>
-
-
-            <div>
-
-                ₹${Number(
-                    order.subtotal ||
+            const amount =
+                Number(
+                    order.total_amount ||
+                    order.unit_price ||
                     0
-                ).toLocaleString("en-IN")}
-
-            </div>
+                );
 
 
-            <div>
+            item.innerHTML = `
 
-                <select
-                    onchange="updateOrderStatus(
-                        ${order.order_id},
-                        this.value
-                    )"
-                >
+                <div class="seller-order-info">
 
-                    <option
-                        value="pending"
-                        ${status === "pending" ? "selected" : ""}
+                    <strong>
+                        #${order.order_id}
+                    </strong>
+
+                    <span>
+                        ${escapeHTML(
+                            order.product_name ||
+                            "Product"
+                        )}
+                    </span>
+
+                    <small>
+                        ${escapeHTML(
+                            order.customer_name ||
+                            "Customer"
+                        )}
+                    </small>
+
+                </div>
+
+
+                <div class="seller-order-price">
+
+                    ₹${amount.toLocaleString("en-IN")}
+
+                </div>
+
+
+                <div class="seller-order-status">
+
+                    <select
+                        onchange="updateOrderStatus(
+                            ${Number(order.order_id)},
+                            this.value
+                        )"
                     >
-                        Pending
-                    </option>
 
-                    <option
-                        value="confirmed"
-                        ${status === "confirmed" ? "selected" : ""}
-                    >
-                        Confirmed
-                    </option>
-
-                    <option
-                        value="shipped"
-                        ${status === "shipped" ? "selected" : ""}
-                    >
-                        Shipped
-                    </option>
-
-                    <option
-                        value="delivered"
-                        ${status === "delivered" ? "selected" : ""}
-                    >
-                        Delivered
-                    </option>
-
-                    <option
-                        value="cancelled"
-                        ${status === "cancelled" ? "selected" : ""}
-                    >
-                        Cancelled
-                    </option>
-
-                </select>
-
-            </div>
-
-        `;
+                        <option
+                            value="pending"
+                            ${status === "pending"
+                                ? "selected"
+                                : ""}
+                        >
+                            Pending
+                        </option>
 
 
-        container.appendChild(item);
+                        <option
+                            value="confirmed"
+                            ${status === "confirmed"
+                                ? "selected"
+                                : ""}
+                        >
+                            Confirmed
+                        </option>
 
-    });
+
+                        <option
+                            value="shipped"
+                            ${status === "shipped"
+                                ? "selected"
+                                : ""}
+                        >
+                            Shipped
+                        </option>
+
+
+                        <option
+                            value="delivered"
+                            ${status === "delivered"
+                                ? "selected"
+                                : ""}
+                        >
+                            Delivered
+                        </option>
+
+
+                        <option
+                            value="cancelled"
+                            ${status === "cancelled"
+                                ? "selected"
+                                : ""}
+                        >
+                            Cancelled
+                        </option>
+
+                    </select>
+
+                </div>
+
+            `;
+
+
+            container.appendChild(item);
+
+        });
 }
 
 
-
-// ==========================================
+// ============================================================
 // UPDATE ORDER STATUS
-// ==========================================
+// ============================================================
 
 async function updateOrderStatus(
     orderId,
@@ -1247,14 +1435,6 @@ async function updateOrderStatus(
 
 
     if (!user) {
-
-        alert(
-            "⚠️ Please sign in as a seller."
-        );
-
-        window.location.href =
-            "login.html";
-
         return;
     }
 
@@ -1272,9 +1452,13 @@ async function updateOrderStatus(
                             "application/json"
                     },
 
-                    body: JSON.stringify({
-                        status: status
-                    })
+                    body:
+                        JSON.stringify({
+
+                            order_status:
+                                status
+
+                        })
                 }
             );
 
@@ -1287,15 +1471,9 @@ async function updateOrderStatus(
 
             throw new Error(
                 data.error ||
-                "Failed to update order status"
+                "Failed to update order status."
             );
-
         }
-
-
-        alert(
-            "✅ Order status updated!"
-        );
 
 
         loadSellerOrders();
@@ -1303,29 +1481,32 @@ async function updateOrderStatus(
 
     } catch (error) {
 
-        console.error(error);
-
-        alert(
-            `❌ ${error.message}`
+        console.error(
+            "Order status error:",
+            error
         );
 
+
+        alert(
+            error.message
+        );
     }
 }
 
 
-
-// ==========================================
+// ============================================================
 // CLOSE MODALS WHEN CLICKING OUTSIDE
-// ==========================================
+// ============================================================
 
 window.addEventListener(
     "click",
-    (event) => {
+    event => {
 
         const addModal =
             document.getElementById(
                 "product-modal"
             );
+
 
         const editModal =
             document.getElementById(
@@ -1334,32 +1515,64 @@ window.addEventListener(
 
 
         if (
+            addModal &&
             event.target === addModal
         ) {
 
-            addModal.style.display =
-                "none";
-
+            closeProductModal();
         }
 
 
         if (
+            editModal &&
             event.target === editModal
         ) {
 
-            editModal.style.display =
-                "none";
-
+            closeEditProductModal();
         }
 
     }
 );
 
 
+// ============================================================
+// LOGOUT
+// ============================================================
 
-// ==========================================
-// LOAD SELLER PAGE
-// ==========================================
+function logoutSeller() {
+
+    // Remove the actual ShopSphere login session.
+    localStorage.removeItem(
+        "shopsphere_user"
+    );
+
+    // Remove older login keys too.
+    localStorage.removeItem(
+        "sellerId"
+    );
+
+    localStorage.removeItem(
+        "userId"
+    );
+
+    localStorage.removeItem(
+        "user"
+    );
+
+    localStorage.removeItem(
+        "seller"
+    );
+
+
+    // Go back to login page.
+    window.location.href =
+        "login.html";
+}
+
+
+// ============================================================
+// LOAD PAGE
+// ============================================================
 
 document.addEventListener(
     "DOMContentLoaded",
@@ -1372,7 +1585,7 @@ document.addEventListener(
         if (!user) {
 
             alert(
-                "⚠️ Please sign in as a seller."
+                "Please sign in as a seller."
             );
 
             window.location.href =

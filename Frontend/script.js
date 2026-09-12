@@ -78,10 +78,6 @@ async function loadProducts() {
                                 .toLocaleString("en-IN")}
                         </strong>
 
-                        <span>
-                            ${product.quantity} in stock
-                        </span>
-
                     </div>
 
 
