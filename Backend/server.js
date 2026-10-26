@@ -224,8 +224,7 @@ app.delete("/api/cart/remove/:cartItemId", (req, res) => {
 // CREATE ORDER
 // ===============================
 
-app.post("/api/orders", (req, res) => {
-
+app.post("/api/orders", async (req, res) => {
     const {
         user_id,
         full_name,
@@ -237,361 +236,128 @@ app.post("/api/orders", (req, res) => {
         payment_method
     } = req.body;
 
-
-    // Validate required fields
     if (
-        !user_id ||
-        !full_name ||
-        !phone ||
-        !address ||
-        !city ||
-        !state ||
-        !postal_code ||
-        !payment_method
+        !user_id || !full_name || !phone || !address || !city ||
+        !state || !postal_code || !payment_method
     ) {
-        return res.status(400).json({
-            error: "All checkout details are required"
-        });
+        return res.status(400).json({ error: "All checkout details are required" });
     }
 
+    const validPaymentMethods = ["UPI", "Card", "Net Banking", "Cash on Delivery"];
+    if (!validPaymentMethods.includes(payment_method)) {
+        return res.status(400).json({ error: "Choose a valid payment method" });
+    }
 
-    // Start MySQL transaction
-    db.beginTransaction((err) => {
+    let connection;
+    try {
+        // A pool is not itself a transaction connection. Acquire a connection
+        // so every step below uses the same transaction.
+        connection = await db.promise().getConnection();
+        await connection.beginTransaction();
 
-        if (err) {
-            return res.status(500).json({
-                error: err.message
-            });
-        }
-
-
-        // Get customer's cart
-        const cartSQL = `
-            SELECT
-                ci.cart_item_id,
-                ci.product_id,
-                ci.quantity,
-                p.product_name,
-                p.price,
-                i.quantity AS stock
+        const [cartItems] = await connection.query(`
+            SELECT ci.cart_item_id, ci.product_id, ci.quantity,
+                   p.product_name, p.price, i.quantity AS stock
             FROM cart_items ci
-            JOIN cart c
-                ON ci.cart_id = c.cart_id
-            JOIN products p
-                ON ci.product_id = p.product_id
-            JOIN inventory i
-                ON p.product_id = i.product_id
+            JOIN cart c ON ci.cart_id = c.cart_id
+            JOIN products p ON ci.product_id = p.product_id
+            JOIN inventory i ON p.product_id = i.product_id
             WHERE c.user_id = ?
-        `;
-
-
-        db.query(cartSQL, [user_id], (err, cartItems) => {
-
-            if (err) {
-                return rollbackOrder(err);
-            }
-
-
-            // Check whether cart is empty
-            if (cartItems.length === 0) {
-
-                return rollbackOrder(
-                    new Error("Your cart is empty")
-                );
-
-            }
-
-
-            // Check stock
-            for (const item of cartItems) {
-
-                if (item.quantity > item.stock) {
-
-                    return rollbackOrder(
-                        new Error(
-                            `${item.product_name} does not have enough stock`
-                        )
-                    );
-
-                }
-
-            }
-
-
-            // Calculate total
-            const totalAmount = cartItems.reduce(
-                (total, item) =>
-                    total + Number(item.price) * item.quantity,
-                0
-            );
-
-
-            // Create order
-            const orderSQL = `
-                INSERT INTO orders
-                (user_id, total_amount, order_status)
-                VALUES (?, ?, 'confirmed')
-            `;
-
-
-            db.query(
-                orderSQL,
-                [user_id, totalAmount],
-                (err, orderResult) => {
-
-                    if (err) {
-                        return rollbackOrder(err);
-                    }
-
-
-                    const orderId = orderResult.insertId;
-
-
-                    // Save address
-                    const addressSQL = `
-                        INSERT INTO addresses
-                        (
-                            user_id,
-                            address_line,
-                            city,
-                            state,
-                            postal_code,
-                            country
-                        )
-                        VALUES (?, ?, ?, ?, ?, 'India')
-                    `;
-
-
-                    db.query(
-                        addressSQL,
-                        [
-                            user_id,
-                            address,
-                            city,
-                            state,
-                            postal_code
-                        ],
-                        (err) => {
-
-                            if (err) {
-                                return rollbackOrder(err);
-                            }
-
-
-                            // Insert order items
-                            const orderItemSQL = `
-                                INSERT INTO order_items
-                                (
-                                    order_id,
-                                    product_id,
-                                    quantity,
-                                    unit_price
-                                )
-                                VALUES ?
-                            `;
-
-
-                            const orderItems = cartItems.map(item => [
-                                orderId,
-                                item.product_id,
-                                item.quantity,
-                                item.price
-                            ]);
-
-
-                            db.query(
-                                orderItemSQL,
-                                [orderItems],
-                                (err) => {
-
-                                    if (err) {
-                                        return rollbackOrder(err);
-                                    }
-
-
-                                    // Create payment
-                                    let paymentStatus = "successful";
-
-                                    if (
-                                        payment_method ===
-                                        "Cash on Delivery"
-                                    ) {
-                                        paymentStatus = "pending";
-                                    }
-
-
-                                    const transactionId =
-                                        payment_method ===
-                                        "Cash on Delivery"
-                                            ? null
-                                            : "TXN" +
-                                              Date.now();
-
-
-                                    const paymentSQL = `
-                                        INSERT INTO payments
-                                        (
-                                            order_id,
-                                            payment_method,
-                                            payment_status,
-                                            transaction_id,
-                                            paid_at
-                                        )
-                                        VALUES (?, ?, ?, ?, ?)
-                                    `;
-
-
-                                    db.query(
-                                        paymentSQL,
-                                        [
-                                            orderId,
-                                            payment_method,
-                                            paymentStatus,
-                                            transactionId,
-                                            paymentStatus ===
-                                            "successful"
-                                                ? new Date()
-                                                : null
-                                        ],
-                                        (err) => {
-
-                                            if (err) {
-                                                return rollbackOrder(err);
-                                            }
-
-
-                                            // Reduce inventory
-                                            let completed =
-                                                0;
-
-
-                                            cartItems.forEach(item => {
-
-                                                const updateStockSQL = `
-                                                    UPDATE inventory
-                                                    SET quantity = quantity - ?
-                                                    WHERE product_id = ?
-                                                `;
-
-
-                                                db.query(
-                                                    updateStockSQL,
-                                                    [
-                                                        item.quantity,
-                                                        item.product_id
-                                                    ],
-                                                    (err) => {
-
-                                                        if (err) {
-                                                            return rollbackOrder(
-                                                                err
-                                                            );
-                                                        }
-
-
-                                                        completed++;
-
-
-                                                        // After all stock updates
-                                                        if (
-                                                            completed ===
-                                                            cartItems.length
-                                                        ) {
-
-                                                            // Clear cart
-                                                            const clearCartSQL = `
-                                                                DELETE ci
-                                                                FROM cart_items ci
-                                                                JOIN cart c
-                                                                    ON ci.cart_id = c.cart_id
-                                                                WHERE c.user_id = ?
-                                                            `;
-
-
-                                                            db.query(
-                                                                clearCartSQL,
-                                                                [user_id],
-                                                                (err) => {
-
-                                                                    if (err) {
-                                                                        return rollbackOrder(
-                                                                            err
-                                                                        );
-                                                                    }
-
-
-                                                                    // Everything successful
-                                                                    db.commit(
-                                                                        (err) => {
-
-                                                                            if (err) {
-                                                                                return rollbackOrder(
-                                                                                    err
-                                                                                );
-                                                                            }
-
-
-                                                                            res.json({
-
-                                                                                message:
-                                                                                    "Order placed successfully!",
-
-                                                                                order_id:
-                                                                                    orderId,
-
-                                                                                total_amount:
-                                                                                    totalAmount,
-
-                                                                                payment_status:
-                                                                                    paymentStatus
-
-                                                                            });
-
-                                                                        }
-                                                                    );
-
-                                                                }
-                                                            );
-
-                                                        }
-
-                                                    }
-                                                );
-
-                                            });
-
-                                        }
-                                    );
-
-                                }
-                            );
-
-                        }
-                    );
-
-                }
-            );
-
-        });
-
-
-        // Rollback helper
-        function rollbackOrder(error) {
-
-            db.rollback(() => {
-
-                res.status(400).json({
-                    error: error.message
-                });
-
-            });
-
+            FOR UPDATE
+        `, [user_id]);
+
+        if (cartItems.length === 0) {
+            const error = new Error("Your cart is empty");
+            error.statusCode = 400;
+            throw error;
         }
 
-    });
+        for (const item of cartItems) {
+            if (item.quantity > item.stock) {
+                const error = new Error(`${item.product_name} does not have enough stock`);
+                error.statusCode = 400;
+                throw error;
+            }
+        }
 
+        const totalCents = cartItems.reduce((total, item) =>
+            total + Math.round(Number(item.price) * 100) * Number(item.quantity), 0);
+        const totalAmount = totalCents / 100;
+
+        const [orderResult] = await connection.query(`
+            INSERT INTO orders (user_id, total_amount, order_status)
+            VALUES (?, ?, 'confirmed')
+        `, [user_id, totalAmount]);
+        const orderId = orderResult.insertId;
+
+        await connection.query(`
+            INSERT INTO addresses
+                (user_id, address_line, city, state, postal_code, country)
+            VALUES (?, ?, ?, ?, ?, 'India')
+        `, [user_id, address, city, state, postal_code]);
+
+        const orderItems = cartItems.map(item => [
+            orderId, item.product_id, item.quantity, item.price
+        ]);
+        await connection.query(`
+            INSERT INTO order_items (order_id, product_id, quantity, unit_price)
+            VALUES ?
+        `, [orderItems]);
+
+        const paymentStatus = payment_method === "Cash on Delivery" ? "pending" : "successful";
+        const transactionId = paymentStatus === "successful" ? `TXN${Date.now()}` : null;
+        await connection.query(`
+            INSERT INTO payments
+                (order_id, payment_method, payment_status, transaction_id, paid_at)
+            VALUES (?, ?, ?, ?, ?)
+        `, [
+            orderId,
+            payment_method,
+            paymentStatus,
+            transactionId,
+            paymentStatus === "successful" ? new Date() : null
+        ]);
+
+        for (const item of cartItems) {
+            const [updateResult] = await connection.query(`
+                UPDATE inventory
+                SET quantity = quantity - ?
+                WHERE product_id = ? AND quantity >= ?
+            `, [item.quantity, item.product_id, item.quantity]);
+            if (updateResult.affectedRows !== 1) {
+                const error = new Error(`${item.product_name} does not have enough stock`);
+                error.statusCode = 400;
+                throw error;
+            }
+        }
+
+        await connection.query(`
+            DELETE ci FROM cart_items ci
+            JOIN cart c ON ci.cart_id = c.cart_id
+            WHERE c.user_id = ?
+        `, [user_id]);
+
+        await connection.commit();
+        return res.json({
+            message: "Order placed successfully!",
+            order_id: orderId,
+            total_amount: totalAmount,
+            payment_status: paymentStatus
+        });
+    } catch (error) {
+        if (connection) {
+            try { await connection.rollback(); } catch (rollbackError) {
+                console.error("Order rollback failed:", rollbackError.message);
+            }
+        }
+        console.error("Order creation failed:", error.message);
+        return res.status(error.statusCode || 500).json({
+            error: error.statusCode ? error.message : "We could not place the order. Please try again."
+        });
+    } finally {
+        if (connection) connection.release();
+    }
 });
-
 // ===============================
 // GET CUSTOMER ORDERS
 // ===============================
