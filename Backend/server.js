@@ -1,5 +1,36 @@
 const express = require("express");
 const cors = require("cors");
+const crypto = require("crypto");
+
+function hashPassword(password) {
+    const salt = crypto.randomBytes(16);
+    return new Promise((resolve, reject) => {
+        crypto.scrypt(password, salt, 64, (error, key) => {
+            if (error) return reject(error);
+            resolve(`scrypt$${salt.toString("base64url")}$${key.toString("base64url")}`);
+        });
+    });
+}
+
+function passwordMatches(password, storedPassword) {
+    if (typeof storedPassword !== "string") return Promise.resolve(false);
+    if (!storedPassword.startsWith("scrypt$")) {
+        return Promise.resolve(password === storedPassword);
+    }
+
+    const parts = storedPassword.split("$");
+    if (parts.length !== 3) return Promise.resolve(false);
+    const salt = Buffer.from(parts[1], "base64url");
+    const expected = Buffer.from(parts[2], "base64url");
+    if (salt.length !== 16 || expected.length !== 64) return Promise.resolve(false);
+
+    return new Promise((resolve, reject) => {
+        crypto.scrypt(password, salt, 64, (error, actual) => {
+            if (error) return reject(error);
+            resolve(crypto.timingSafeEqual(actual, expected));
+        });
+    });
+}
 
 const db = require("./db");
 
@@ -1279,139 +1310,109 @@ app.post("/api/wishlist", (req, res) => {
 // REGISTER
 // ===============================
 
-app.post("/api/register", (req, res) => {
+app.post("/api/register", async (req, res) => {
+    const body = req.body || {};
+    const fullName = String(body.full_name || "").trim();
+    const email = String(body.email || "").trim().toLowerCase();
+    const password = String(body.password || "");
+    const phone = String(body.phone || "").trim();
+    const userRole = ["customer", "seller"].includes(body.role) ? body.role : "customer";
 
-    const { full_name, email, password, phone, role } = req.body;
-
-    if (!full_name || !email || !password) {
-        return res.status(400).json({
-            error: "Name, email and password are required"
-        });
+    if (!fullName || !email || !password) {
+        return res.status(400).json({ error: "Name, email and password are required" });
+    }
+    if (fullName.length > 100 || email.length > 100 || phone.length > 15) {
+        return res.status(400).json({ error: "Please check the length of your name, email, or phone number" });
+    }
+    if (password.length < 8 || password.length > 128) {
+        return res.status(400).json({ error: "Password must be between 8 and 128 characters" });
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        return res.status(400).json({ error: "Enter a valid email address" });
     }
 
-    const userRole =
-        ["customer", "seller"].includes(role)
-            ? role
-            : "customer";
+    let connection;
+    try {
+        const passwordHash = await hashPassword(password);
+        connection = await db.promise().getConnection();
+        await connection.beginTransaction();
 
-    const sql = `
-        INSERT INTO users
-        (full_name, email, password, phone, role)
-        VALUES (?, ?, ?, ?, ?)
-    `;
+        const [userResult] = await connection.query(`
+            INSERT INTO users (full_name, email, password, phone, role)
+            VALUES (?, ?, ?, ?, ?)
+        `, [fullName, email, passwordHash, phone, userRole]);
 
-    db.query(
-        sql,
-        [full_name, email, password, phone || "", userRole],
-        (err, result) => {
+        if (userRole === "seller") {
+            await connection.query(`
+                INSERT INTO sellers (user_id, store_name, store_description)
+                VALUES (?, ?, ?)
+            `, [userResult.insertId, fullName, "New ShopSphere Store"]);
+        }
 
-            if (err) {
-                return res.status(500).json({
-                    error: err.code === "ER_DUP_ENTRY"
-                        ? "Email already registered"
-                        : err.message
-                });
-            }
-
-            // Automatically create seller record
-            if (userRole === "seller") {
-
-                const sellerSQL = `
-                    INSERT INTO sellers
-                    (user_id, store_name,store_description)
-                    VALUES (?, ?, ?)
-                `;
-
-                db.query(
-                    sellerSQL,
-                    [
-                        result.insertId,
-                        full_name,
-                        "New ShopSphere Store"
-                    ],
-                    (sellerErr) => {
-
-                        if (sellerErr) {
-                            console.error(sellerErr);
-                        }
-
-                        return res.json({
-                            message: "Registration successful!",
-                            user_id: result.insertId,
-                            role: userRole
-                        });
-                    }
-                );
-
-            } else {
-
-                res.json({
-                    message: "Registration successful!",
-                    user_id: result.insertId,
-                    role: userRole
-                });
-
+        await connection.commit();
+        return res.status(201).json({
+            message: "Registration successful!",
+            user_id: userResult.insertId,
+            role: userRole
+        });
+    } catch (error) {
+        if (connection) {
+            try { await connection.rollback(); } catch (rollbackError) {
+                console.error("Registration rollback failed:", rollbackError.message);
             }
         }
-    );
+        if (error.code === "ER_DUP_ENTRY") {
+            return res.status(409).json({ error: "Email already registered" });
+        }
+        console.error("Registration failed:", error.message);
+        return res.status(500).json({ error: "Could not create the account. Please try again." });
+    } finally {
+        if (connection) connection.release();
+    }
 });
 
 
-// ===============================
 // LOGIN
 // ===============================
 
-app.post("/api/login", (req, res) => {
-
-    const { email, password } = req.body;
+app.post("/api/login", async (req, res) => {
+    const body = req.body || {};
+    const email = String(body.email || "").trim().toLowerCase();
+    const password = String(body.password || "");
 
     if (!email || !password) {
-        return res.status(400).json({
-            error: "Email and password are required"
-        });
+        return res.status(400).json({ error: "Email and password are required" });
     }
 
-    const sql = `
-    SELECT
-        u.user_id,
-        u.full_name,
-        u.email,
-        u.phone,
-        u.role,
-        s.seller_id
-    FROM users u
-    LEFT JOIN sellers s
-        ON u.user_id = s.user_id
-    WHERE u.email = ?
-    AND u.password = ?
-`;
+    try {
+        const [results] = await db.promise().query(`
+            SELECT u.user_id, u.full_name, u.email, u.phone, u.role,
+                   u.password AS password_hash, s.seller_id
+            FROM users u
+            LEFT JOIN sellers s ON u.user_id = s.user_id
+            WHERE u.email = ?
+        `, [email]);
 
-    db.query(
-        sql,
-        [email, password],
-        (err, results) => {
-
-            if (err) {
-                return res.status(500).json({
-                    error: err.message
-                });
-            }
-
-            if (results.length === 0) {
-                return res.status(401).json({
-                    error: "Invalid email or password"
-                });
-            }
-
-            res.json({
-                message: "Login successful!",
-                user: results[0]
-            });
-
+        if (!results.length || !(await passwordMatches(password, results[0].password_hash))) {
+            return res.status(401).json({ error: "Invalid email or password" });
         }
-    );
-});
 
+        const record = results[0];
+        if (!record.password_hash.startsWith("scrypt$")) {
+            const passwordHash = await hashPassword(password);
+            await db.promise().query(
+                "UPDATE users SET password = ? WHERE user_id = ?",
+                [passwordHash, record.user_id]
+            );
+        }
+
+        const { password_hash, ...user } = record;
+        return res.json({ message: "Login successful!", user });
+    } catch (error) {
+        console.error("Login failed:", error.message);
+        return res.status(500).json({ error: "Could not sign in. Please try again." });
+    }
+});
 // ===============================
 // ADMIN DASHBOARD
 // ===============================
