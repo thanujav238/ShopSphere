@@ -539,6 +539,7 @@
 
     </style>
 
+    <link rel="stylesheet" href="theme.css">
 </head>
 
 
@@ -672,9 +673,9 @@
 
             <div class="login-header">
 
-                <h2>Welcome back</h2>
+                <h2 id="auth-title">Welcome back</h2>
 
-                <p>
+                <p id="auth-description">
                     Sign in to continue to your ShopSphere account.
                 </p>
 
@@ -686,12 +687,12 @@
 
                 <!-- ACCOUNT TYPE -->
 
-                <span class="login-as-label">
+                <span class="login-as-label" id="login-as-label">
                     Login as
                 </span>
 
 
-                <div class="account-selector">
+                <div class="account-selector" id="account-selector">
 
 
                     <div class="account-option">
@@ -762,6 +763,24 @@
                 </div>
 
 
+                <div class="form-group register-field" id="full-name-group" hidden>
+                    <label for="full-name">Full name</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-user"></i>
+                        <input type="text" id="full-name" autocomplete="name" placeholder="Enter your full name">
+                    </div>
+                </div>
+
+
+                <div class="form-group register-field" id="phone-group" hidden>
+                    <label for="phone">Phone number <span>(optional)</span></label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-phone"></i>
+                        <input type="tel" id="phone" autocomplete="tel" placeholder="Enter your phone number">
+                    </div>
+                </div>
+
+
                 <!-- EMAIL -->
 
                 <div class="form-group">
@@ -802,6 +821,7 @@
                             type="password"
                             id="password"
                             placeholder="Enter your password"
+                            autocomplete="current-password"
                             required
                         >
 
@@ -821,9 +841,18 @@
                 </div>
 
 
+                <div class="form-group register-field" id="confirm-password-group" hidden>
+                    <label for="confirm-password">Confirm password</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-lock"></i>
+                        <input type="password" id="confirm-password" autocomplete="new-password" placeholder="Enter your password again">
+                    </div>
+                </div>
+
+
                 <!-- OPTIONS -->
 
-                <div class="login-options">
+                <div class="login-options" id="login-options">
 
                     <label class="remember">
 
@@ -864,6 +893,11 @@
 
             <p id="message"></p>
 
+            <p class="auth-switch" id="auth-switch">
+                New to ShopSphere?
+                <button type="button" id="auth-mode-toggle">Create customer account</button>
+            </p>
+
 
             <div class="security-note">
 
@@ -903,6 +937,23 @@
 
     const API_URL =
         "https://shopsphere-backend-4aji.onrender.com";
+
+    async function readApiResponse(response) {
+        const contentType = response.headers.get("content-type") || "";
+        const responseText = await response.text();
+
+        if (!contentType.toLowerCase().includes("application/json")) {
+            throw new Error(
+                `The ShopSphere API returned a webpage (HTTP ${response.status}) instead of JSON. Check that the backend is deployed and API_URL is correct.`
+            );
+        }
+
+        try {
+            return JSON.parse(responseText);
+        } catch {
+            throw new Error("The ShopSphere API returned invalid JSON. Please try again later.");
+        }
+    }
 
 
     /* =========================================
@@ -959,169 +1010,111 @@
        LOGIN
     ========================================== */
 
-    document
-        .getElementById("login-form")
-        .addEventListener("submit", async (e) => {
+    let authMode = "login";
+    const authMessage = document.getElementById("message");
+    const authButton = document.getElementById("login-button");
 
-            e.preventDefault();
+    function setAuthMode(mode, preserveMessage = false) {
+        authMode = mode;
+        const registering = mode === "register";
+        document.getElementById("auth-title").textContent = registering ? "Create your account" : "Welcome back";
+        document.getElementById("auth-description").textContent = registering
+            ? "Create a customer account to shop and track your orders."
+            : "Sign in to continue to your ShopSphere account.";
+        document.getElementById("account-selector").hidden = registering;
+        document.getElementById("login-as-label").hidden = registering;
+        document.getElementById("login-options").hidden = registering;
+        document.getElementById("full-name-group").hidden = !registering;
+        document.getElementById("phone-group").hidden = !registering;
+        document.getElementById("confirm-password-group").hidden = !registering;
+        document.getElementById("full-name").required = registering;
+        document.getElementById("confirm-password").required = registering;
+        document.getElementById("password").minLength = registering ? 8 : 0;
+        document.getElementById("password").autocomplete = registering ? "new-password" : "current-password";
+        document.getElementById("auth-mode-toggle").textContent = registering ? "Sign in" : "Create customer account";
+        document.getElementById("auth-switch").firstChild.textContent = registering
+            ? "Already have an account? "
+            : "New to ShopSphere? ";
+        authButton.innerHTML = registering
+            ? '<i class="fa-solid fa-user-plus"></i><span>Create Account</span>'
+            : '<i class="fa-solid fa-arrow-right-to-bracket"></i><span>Sign In</span>';
+        if (!preserveMessage) {
+            authMessage.textContent = "";
+            authMessage.classList.remove("auth-success");
+        }
+    }
 
+    document.getElementById("auth-mode-toggle").addEventListener("click", () => {
+        setAuthMode(authMode === "login" ? "register" : "login");
+    });
 
-            const email =
-                document
-                    .getElementById("email")
-                    .value
-                    .trim();
+    document.getElementById("login-form").addEventListener("submit", async (event) => {
+        event.preventDefault();
 
+        const email = document.getElementById("email").value.trim();
+        const password = document.getElementById("password").value;
+        const registering = authMode === "register";
+        const selectedRole = document.querySelector('input[name="account-type"]:checked').value;
+        authMessage.textContent = "";
+        authMessage.classList.remove("auth-success");
 
-            const password =
-                document
-                    .getElementById("password")
-                    .value;
+        if (registering && password !== document.getElementById("confirm-password").value) {
+            authMessage.textContent = "❌ The passwords do not match.";
+            return;
+        }
 
+        authButton.disabled = true;
+        authButton.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i><span>' +
+            (registering ? "Creating account..." : "Signing in...") + "</span>";
 
-            const selectedRole =
-                document.querySelector(
-                    'input[name="account-type"]:checked'
-                ).value;
-
-
-            const message =
-                document.getElementById("message");
-
-
-            const loginButton =
-                document.getElementById("login-button");
-
-
-            const originalButtonHTML =
-                loginButton.innerHTML;
-
-
-            message.textContent = "";
-
-
-            /* Loading state */
-
-            loginButton.disabled = true;
-
-
-            loginButton.innerHTML = `
-
-                <i class="fa-solid fa-spinner fa-spin"></i>
-
-                <span>Signing In...</span>
-
-            `;
-
-
-            try {
-
-                const response =
-                    await fetch(
-                        `${API_URL}/api/login`,
-                        {
-                            method: "POST",
-
-                            headers: {
-                                "Content-Type": "application/json"
-                            },
-
-                            body: JSON.stringify({
-                                email,
-                                password
-                            })
-                        }
-                    );
-
-
-                const data =
-                    await response.json();
-
-
-                if (!response.ok) {
-
-                    throw new Error(
-                        data.error || "Login failed."
-                    );
-
+        try {
+            const endpoint = registering ? "/api/register" : "/api/login";
+            const payload = registering
+                ? {
+                    full_name: document.getElementById("full-name").value.trim(),
+                    email,
+                    phone: document.getElementById("phone").value.trim(),
+                    password,
+                    role: "customer"
                 }
+                : { email, password };
 
+            const response = await fetch(`${API_URL}${endpoint}`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            });
+            const data = await readApiResponse(response);
 
-                /* =================================
-                   VERIFY ACCOUNT TYPE
-                ================================= */
-
-                if (
-                    selectedRole !== data.user.role &&
-                    data.user.role !== "admin"
-                ) {
-
-                    throw new Error(
-                        `This account is registered as a ${data.user.role}. Please select "${data.user.role}" and try again.`
-                    );
-
-                }
-
-
-                /* =================================
-                   SAVE LOGGED-IN USER
-                ================================= */
-
-                localStorage.setItem(
-                    "shopsphere_user",
-                    JSON.stringify(data.user)
-                );
-
-
-                /* =================================
-                   ROLE BASED REDIRECTION
-                ================================= */
-
-                if (data.user.role === "seller") {
-
-                    window.location.href =
-                        "seller.html";
-
-                }
-
-                else if (data.user.role === "admin") {
-
-                    window.location.href =
-                        "admin.html";
-
-                }
-
-                else {
-
-                    window.location.href =
-                        "index.html";
-
-                }
-
-
+            if (!response.ok) {
+                throw new Error(data.error || (registering ? "Registration failed." : "Login failed."));
             }
 
-            catch (error) {
-
-                console.error(
-                    "Login error:",
-                    error
-                );
-
-
-                message.textContent =
-                    "❌ " + error.message;
-
-
-                loginButton.disabled = false;
-
-
-                loginButton.innerHTML =
-                    originalButtonHTML;
-
+            if (registering) {
+                document.getElementById("password").value = "";
+                document.getElementById("confirm-password").value = "";
+                setAuthMode("login", true);
+                authMessage.classList.add("auth-success");
+                authMessage.textContent = "✅ Customer account created. Sign in with your email and password.";
+                return;
             }
 
-        });
+            if (selectedRole !== data.user.role && data.user.role !== "admin") {
+                throw new Error(`This account is registered as a ${data.user.role}. Please select "${data.user.role}" and try again.`);
+            }
+
+            localStorage.setItem("shopsphere_user", JSON.stringify(data.user));
+            window.location.href = data.user.role === "seller"
+                ? "seller.html"
+                : data.user.role === "admin" ? "admin.html" : "index.html";
+        } catch (error) {
+            console.error(registering ? "Registration error:" : "Login error:", error);
+            authMessage.textContent = "❌ " + error.message;
+        } finally {
+            authButton.disabled = false;
+            setAuthMode(authMode, true);
+        }
+    });
 
 </script>
 
